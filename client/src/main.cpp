@@ -3,6 +3,14 @@
 
 int main(int argc, char *argv[])
 {
+
+    diff("/home/simon/Cpp/Got-SVN/client/repo/testAfter.cpp",
+         "/home/simon/Cpp/Got-SVN/client/repo/testBefore.cpp",
+         "/home/simon/Cpp/Got-SVN/client/repo/test.patch");
+
+    applyChanges("/home/simon/Cpp/Got-SVN/client/repo/testBefore.cpp",
+                 "/home/simon/Cpp/Got-SVN/client/repo/test.patch");
+
     /*
     //POST
     {
@@ -13,18 +21,18 @@ int main(int argc, char *argv[])
                            cpr::Header{{"Content-Type", "application/json"}});
         std::cout << "Returned Status:" << r.status_code << std::endl;
     }
-    */
+    
 
     //GET
     {
         spdlog::info("GET REQUEST");
 
-        auto r = cpr::Get(cpr::Url{"http://localhost:3000"});
+        auto r = cpr::Get(cpr::Url{"http://localhost:4000"});
 
         spdlog::info("Returned Text: {}", r.text);
     }
 
-    /*
+    
     {
         std::cout << "Action: Update Product with Id = 1" << std::endl;
         auto r = cpr::Post(cpr::Url{"http://localhost:51654/api/products/1"},

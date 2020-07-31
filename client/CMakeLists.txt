@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED 11)
 
 set(src
     src/main.cpp
+    src/diff.cpp
 )
 
 set(head
