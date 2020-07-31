@@ -1,15 +1,7 @@
---- /home/simon/Cpp/Got-SVN/client/repo/testBefore.cpp	2020-07-30 19:26:14.793980059 -0600
-+++ /home/simon/Cpp/Got-SVN/client/repo/testAfter.cpp	2020-07-30 19:26:24.829505847 -0600
-@@ -3,11 +3,9 @@
- 
- using namespace std;
- 
-+//casdadasd
- int main()
- {
-     //asd
-     return 0;
--
--    //asdasd
--    //sdasda
- }
+11c
+    return 0;
+.
+8,9d
+5a
+//casdadasd
+.
