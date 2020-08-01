@@ -8,11 +8,13 @@ set(src
     src/main.cpp
     src/diff.cpp
     src/huffman.cpp
+    src/md5.cpp
 )
 
 set(head
     include/client.hpp
     include/huffman.hpp
+    include/md5.h
 )
 
 include_directories(${PROJECT_SOURCE_DIR}/include/)

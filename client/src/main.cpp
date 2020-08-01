@@ -1,6 +1,7 @@
 
 #include <client.hpp>
 #include <huffman.hpp>
+#include "md5.h"
 
 int main(int argc, char *argv[])
 {
@@ -92,6 +93,11 @@ int main(int argc, char *argv[])
     ofstream fs("/home/davidaqc/Documents/Got-SVN/client/src/prueba.txt"); 
     fs << cadena_descomprimida << endl;
     fs.close();
+
+    // ------ Codigo para probar MD5 ----------------
+
+    string password = md5("1123");
+    cout << password << endl;
 
     return 0;
 }
