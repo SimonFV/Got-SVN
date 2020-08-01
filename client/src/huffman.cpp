@@ -6,7 +6,9 @@
 using namespace std;
 
 vector< pair <std::string, std::string> > vect;
+string cadena_descomprimida;
 string str = "";
+string str2 = "";
 
 // A Tree node
 struct Node
@@ -123,15 +125,11 @@ void buildHuffmanTree(string text)
 	encode(root, "", huffmanCode);
 
 	//cout << "Huffman Codes are :\n" << '\n';
-    string root_server1 = "";
-    string root_server2 = "";
 	for (auto pair: huffmanCode) {
-        root_server1 += pair.first;
-        root_server2 += pair.second;
+		str2 += pair.first;
+		str2 += pair.second;
+		str2 += "/";
 		//cout << pair.first << " " << pair.second << '\n';
-        vect.push_back( make_pair(root_server2, root_server1 ));
-        root_server1 = "";
-        root_server2 = "";
 	}
 
 	//cout << "\nOriginal string was :\n" << text << '\n';
@@ -153,64 +151,48 @@ void buildHuffmanTree(string text)
 	}*/
 }
 
-// Huffman coding algorithm
-int main()
-{
+string descomprimir_data(string codigo_binario, string simbolo_codigo){
+	
+	// Reconstruir vector desde el string simbolo_codigo
+	string simbolo;
+	string codigo;
+	int i;
+	while(simbolo_codigo!=""){
+		codigo = "";
+		simbolo = simbolo_codigo[0];
+		simbolo_codigo.erase(0, 1);
+		i = 0;
+		while (simbolo_codigo[i] != '/')
+    	{
+			codigo += simbolo_codigo[i];
+			i++;
+		}
+		simbolo_codigo.erase(0, i+1);	
+		vect.push_back( make_pair(simbolo, codigo));
+	}
 
-    fstream ficheroEntrada;
-    string nombre = "prueba.txt";
-    string linea_texto;
-    string texto_final;
- 
-    ficheroEntrada.open ( nombre.c_str() , ios::in);
-    if (ficheroEntrada.is_open()) {
-        while (! ficheroEntrada.eof() ) {
-            getline (ficheroEntrada,linea_texto);
-            texto_final += linea_texto + "\n";
-        }
-        ficheroEntrada.close();
-    }else{
-        std::cout << "Fichero inexistente o faltan permisos para abrirlo" << endl;  
-    }
-
-	buildHuffmanTree(texto_final);
-
-    string cadena_comprimida = str; // encodedString
-    cout << endl << "Cadena comprimida" << endl;
-    cout << cadena_comprimida << endl;
-    cout << "Output" << endl;
-    /*for(unsigned int i=0; i<vect.size(); i++){
-        cout << vect[i].second << ' ' << vect[i].first << endl;
-    }*/
-
-    string temporal = "";
-    string cadena_descomprimida = "";
-
-    while(cadena_comprimida!=""){
-        temporal += cadena_comprimida[0];
+	// Descomprimir data
+	string temporal = "";
+    cadena_descomprimida = "";
+    while(codigo_binario!=""){
+        temporal += codigo_binario[0];
         for(unsigned int i=0; i<vect.size(); i++){
-            if(temporal==vect[i].first){
-                cadena_descomprimida += vect[i].second;
+            if(temporal==vect[i].second){
+                cadena_descomprimida += vect[i].first;
                 temporal = "";
                 break;
             }
         }
-        cadena_comprimida.erase(0, 1);
+        codigo_binario.erase(0, 1);
     }
 
-    cout << "Cadena descomprimida" << endl;
-    //cout << cadena_descomprimida << endl;
+	return cadena_descomprimida;
+}
 
-	if(cadena_descomprimida==texto_final){
-		cout << "Las cadenas son iguales" << endl;
-	}else{
-		cout << "Las cadenas NO con iguales" << endl;
-	}
+string pedir_codigoBinario(){
+	return str;
+}
 
-    // Copiar datos en txt
-    /*ofstream fs("cadena_comprimida.txt"); 
-    fs << cadena_descomprimida << endl;
-    fs.close();*/
-
-	return 0;
+string pedir_simboloCodigo(){
+	return str2;
 }
