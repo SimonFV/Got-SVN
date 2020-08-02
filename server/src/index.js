@@ -1,5 +1,8 @@
 const express = require('express');
 const app = express();
+var md5 = require('md5');
+ 
+console.log(md5('123'));
 
 // Settings
 app.set('port', process.env.PORT || 4000);
