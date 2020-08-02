@@ -5,7 +5,7 @@ using namespace std;
 
 void diff(string fileAfter, string fileBefore, string patch)
 {
-    string command = "diff -u " + fileBefore + " " + fileAfter + " > " + patch;
+    string command = "diff -e " + fileBefore + " " + fileAfter + " > " + patch;
     system(command.c_str());
 }
 

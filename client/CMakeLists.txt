@@ -19,7 +19,8 @@ include_directories(${PROJECT_SOURCE_DIR}/include/)
 #Logging
 add_subdirectory(spdlog)
 add_subdirectory(cpr)
+add_subdirectory(jsoncons)
 
 add_executable(run ${src} ${head})
 
-target_link_libraries(run spdlog cpr::cpr)
+target_link_libraries(run spdlog cpr::cpr jsoncons)
