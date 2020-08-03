@@ -1,12 +1,12 @@
 
 #include <client.hpp>
-#include <jsoncons/json.hpp>
-#include <huffman.hpp>
-#include "md5.h"
-#include <string.h>
 
 int main(int argc, char *argv[])
 {
+    string thisPath = get_selfpath();
+    thisPath.erase(thisPath.length() - 3, thisPath.length());
+    spdlog::info(thisPath);
+
     if (argc < 2)
     {
         spdlog::warn("Argumentos insuficientes.");
@@ -170,15 +170,14 @@ int main(int argc, char *argv[])
         spdlog::info("Para ver la lista de opciones disponibles utilice el comando: ./got help");
     }
 
+    diff(thisPath + "../repo/testAfter.cpp",
+         thisPath + "../repo/testBefore.cpp",
+         thisPath + "../repo/test.patch");
+
+    applyChanges(thisPath + "../repo/testBefore.cpp",
+                 thisPath + "../repo/test.patch");
+
     /*
-    diff("/home/simon/Cpp/Got-SVN/client/repo/testAfter.cpp",
-         "/home/simon/Cpp/Got-SVN/client/repo/testBefore.cpp",
-         "/home/simon/Cpp/Got-SVN/client/repo/test.patch");
-
-    applyChanges("/home/simon/Cpp/Got-SVN/client/repo/testBefore.cpp",
-                 "/home/simon/Cpp/Got-SVN/client/repo/test.patch");
-
-
     //EXTRAER DESDE STRING
     std::string data = R"(
     {

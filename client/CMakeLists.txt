@@ -9,6 +9,7 @@ set(src
     src/diff.cpp
     src/huffman.cpp
     src/md5.cpp
+    src/client.cpp
 )
 
 set(head
@@ -18,7 +19,6 @@ set(head
 )
 
 include_directories(${PROJECT_SOURCE_DIR}/include/)
-include_directories(${PROJECT_SOURCE_DIR}/src/)
 
 
 #Logging

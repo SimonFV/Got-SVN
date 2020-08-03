@@ -7,6 +7,11 @@
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include <cpr/cpr.h>
+#include <jsoncons/json.hpp>
+#include <huffman.hpp>
+#include "md5.h"
+#include <string.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -14,53 +19,59 @@ void diff(string fileAfter, string fileBefore, string result);
 
 void applyChanges(string original, string changes);
 
-//HTML REQUESTS
+string get_selfpath();
 
-//POST
 class Client
 {
-    static void send()
+private:
+    static Client *client_instance;
+    string post_body, received_body, url;
+    int status_response;
+    jsoncons::json Json_received;
+
+private:
+    /**
+     * Constructor de la clase cliente.
+     */
+    Client()
     {
-        std::cout << "Action: Create Product with Id = 1" << std::endl;
-        cpr::Response r = cpr::Post(cpr::Url{"http://localhost:4000"},
-                                    cpr::Body{R"(
-                                    {
-                                        "Id":1,
-                                        "Name":"ElectricFan",
-                                        "Qty":14,
-                                        "Price":20.90
-                                    }
-                                    )"},
-                                    cpr::Header{{"Content-Type", "application/json"}});
-        std::cout << "Returned Status:" << r.status_code << std::endl;
-
-        //GET
-
-        spdlog::info("GET REQUEST");
-
-        cpr::Response r1 = cpr::Get(cpr::Url{"http://localhost:4000"});
-
-        spdlog::info("Returned Text: {}", r.text);
-
-        std::cout << "Action: Update Product with Id = 1" << std::endl;
-        cpr::Response r2 = cpr::Post(cpr::Url{"http://localhost:51654/api/products/1"},
-                                     cpr::Body{R"({"Id":1, 
-            "Name":"ElectricFan","Qty":15,"Price":29.80})"},
-                                     cpr::Header{{"Content-Type", "application/json"}});
-        std::cout << "Returned Status:" << r.status_code << std::endl;
-
-        std::cout << "Action: Retrieve all products" << std::endl;
-        cpr::Response r3 = cpr::Get(cpr::Url{"http://localhost:51654/api/products"});
-        std::cout << "Returned Text:" << r.text << std::endl;
-
-        std::cout << "Action: Delete the product with id = 1" << std::endl;
-        cpr::Response r4 = cpr::Delete(cpr::Url{"http://localhost:51654/api/products/1"});
-        std::cout << "Returned Status:" << r.status_code << std::endl;
-
-        std::cout << "Action: Retrieve all products" << std::endl;
-        cpr::Response r5 = cpr::Get(cpr::Url{"http://localhost:51654/api/products"});
-        std::cout << "Returned Text:" << r.text << std::endl;
+        url = "http://localhost:4000/";
+        post_body = "";
+        received_body = "";
+        status_response = 0;
     }
+    /**
+     * Destructor de la clase cliente.
+     */
+    ~Client()
+    {
+    }
+
+public:
+    /**
+     * Método que obtiene la instancia del cliente
+     * @return - Instancia del cliente
+     */
+    static Client *getI();
+    /**
+     * Método que evita la reasignación de la instancia del cliente
+     * @param other - Cliente creado
+     */
+    Client(Client &other) = delete;
+    /**
+     * Método que evita la reasignación de la instancia del cliente
+     */
+    void operator=(const Client &) = delete;
+
+public:
+    void setBody(string jsonFile);
+    jsoncons::json getReceivedBody();
+    int getStatus();
+
+    void POST(string _url, string jsonFile);
+    void GET(string _url);
+    void PUT(string _url, string jsonFile);
+    void DELETE(string _url);
 };
 
 #endif
