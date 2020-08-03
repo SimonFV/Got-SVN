@@ -26,6 +26,6 @@ add_subdirectory(spdlog)
 add_subdirectory(cpr)
 add_subdirectory(jsoncons)
 
-add_executable(run ${src} ${head})
+add_executable(got ${src} ${head})
 
-target_link_libraries(run spdlog cpr::cpr jsoncons)
+target_link_libraries(got spdlog cpr::cpr jsoncons)
