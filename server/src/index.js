@@ -5,7 +5,7 @@ var md5 = require('md5');
 console.log(md5('123'));
 
 // Settings
-app.set('port', process.env.PORT || 4000);
+app.set('port', process.env.PORT || 6000);
 
 // Middlewares -> Funciones que se ejecutan antes de procesar algo
 app.use(express.json());
