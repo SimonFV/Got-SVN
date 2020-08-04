@@ -2,10 +2,28 @@
 #include <client.hpp>
 
 int main(int argc, char *argv[])
-{
+{   
+
     string thisPath = get_selfpath();
     thisPath.erase(thisPath.length() - 3, thisPath.length());
     spdlog::info(thisPath);
+
+    // Metodo Post -> NO recibe nada 
+    Client::getI()->POST("commit", thisPath + "../archivos_json/enviado.json");
+    spdlog::info(Client::getI()->getStatus());
+
+    // Metodo Get -> Recibe algo 
+    Client::getI()->GET("commit_posterior", thisPath + "../archivos_json/recibido.json");
+    spdlog::info(Client::getI()->getStatus());
+
+    // Mostrar lo recibido desde el .json
+    ifstream ifs(thisPath + "../archivos_json/recibido.json");
+    Json::Reader reader;
+    Json::Value obj;
+    reader.parse(ifs, obj); 
+    for (unsigned int i = 0; i < obj.size(); i++){
+        spdlog::info("Diff: " + obj[i]["codigo_diff_posterior"].asString());
+    }
 
     if (argc < 2)
     {

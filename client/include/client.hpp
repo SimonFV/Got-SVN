@@ -12,6 +12,8 @@
 #include "md5.h"
 #include <string.h>
 #include <unistd.h>
+#include <iostream>
+#include <jsoncpp/json/json.h>
 
 using namespace std;
 
@@ -35,7 +37,7 @@ private:
      */
     Client()
     {
-        url = "http://localhost:4000/";
+        url = "http://localhost:9000/";
         post_body = "";
         received_body = "";
         status_response = 0;
@@ -69,9 +71,10 @@ public:
     int getStatus();
 
     void POST(string _url, string jsonFile);
-    void GET(string _url);
+    void GET(string _url, string jsonFile);
     void PUT(string _url, string jsonFile);
     void DELETE(string _url);
+    void limpiar();
 };
 
 #endif
