@@ -11,9 +11,9 @@ router.get('/commit_posterior', (req, res) => {
               "WHERE commit.hash_commit ='" + hash_commit + "' AND diff.nombre_archivo = '" + 
                nombre_archivo + "' " , {hash_commit, nombre_archivo}, (err, rows, fields) => {
     if(!err) {
-      res.json(rows);
+      res.status(200).json(rows);
     } else {
-      console.log(err);
+      res.status(500).send('Operacion fallida al solicitar ir a commit posterior!');
     }
   });  
 });
@@ -26,9 +26,9 @@ router.get('/commit_anterior', (req, res) => {
               "WHERE commit.hash_commit ='" + hash_commit + "' AND diff.nombre_archivo = '" + 
                nombre_archivo + "' " , {hash_commit, nombre_archivo}, (err, rows, fields) => {
     if(!err) {
-      res.json(rows);
+      res.status(200).json(rows);
     } else {
-      console.log(err);
+      res.status(500).send('Operacion fallida al solicitar devolver commit anterior!');
     }
   });  
 });
@@ -41,9 +41,9 @@ router.get('/modificaciones_commit_anterior', (req, res) => {
               "WHERE commit.hash_commit ='" + hash_commit + "' " 
               , {hash_commit}, (err, rows, fields) => {
     if(!err) {
-      res.json(rows);
+      res.status(200).json(rows);
     } else {
-      console.log(err);
+      res.status(500).send('Operacion fallida al solicitar modificacion commit anterior!');
     }
   });  
 });
@@ -56,9 +56,9 @@ router.get('/agregados_commit_anterior', (req, res) => {
               "WHERE commit.hash_commit ='" + hash_commit + "' " 
               , {hash_commit}, (err, rows, fields) => {
     if(!err) {
-      res.json(rows);
+      res.status(200).json(rows);
     } else {
-      console.log(err);
+      res.status(500).send('Operacion fallida al solicitar agregados commit anterior!');
     }
   });  
 });
@@ -71,9 +71,9 @@ router.get('/modificaciones_commit', (req, res) => {
               "WHERE commit.hash_commit ='" + hash_commit + "' AND diff.nombre_archivo = '" + 
                nombre_archivo + "' " , {hash_commit, nombre_archivo}, (err, rows, fields) => {
     if(!err) {
-      res.json(rows);
+      res.status(200).json(rows);
     } else {
-      console.log(err);
+      res.status(500).send('Operacion fallida al solicitar modificaciones commit!');
     }
   });  
 });
@@ -86,9 +86,9 @@ router.get('/agregados_commit', (req, res) => {
               "WHERE commit.hash_commit ='" + hash_commit + "' AND archivo.nombre_archivo = '" + 
                nombre_archivo + "' " , {hash_commit, nombre_archivo}, (err, rows, fields) => {
     if(!err) {
-      res.json(rows);
+      res.status(200).json(rows);
     } else {
-      console.log(err);
+      res.status(500).send('Operacion fallida al solicitar agregados commit!');
     }
   });  
 });
@@ -98,9 +98,9 @@ router.post('/commit', (req, res) => {
   const {hash_commit, comentario} = req.body;
   mysqlConnection.query('INSERT INTO commit SET?', {hash_commit, comentario}, (err, rows, fields) => {
     if(!err) {
-      res.json({status: 'Commit Saved'});
+      res.status(200).send('Commit insertado!');
     } else {
-      console.log("err");
+      res.status(500).send('Operacion fallida al insertar commit!');
     }
   });
 });
@@ -110,9 +110,9 @@ router.post('/archivo', (req, res) => {
   const {nombre_archivo, codigo_huffman, relacion_commit} = req.body;
   mysqlConnection.query('INSERT INTO archivo SET?', {nombre_archivo, codigo_huffman, relacion_commit}, (err, rows, fields) => {
     if(!err) {
-      res.json({status: 'Archivo Saved'});
+      res.status(200).send('Archivo insertado!');
     } else {
-      console.log("err");
+      res.status(500).send('Operacion fallida al insertar archivo!');
     }
   });
 });
@@ -122,21 +122,9 @@ router.post('/diff', (req, res) => {
   const {nombre_archivo, codigo_diff_anterior, codigo_diff_siguiente, checksum, relacion_commit} = req.body;
   mysqlConnection.query('INSERT INTO diff SET?', {nombre_archivo, codigo_diff_anterior, codigo_diff_siguiente, checksum, relacion_commit}, (err, rows, fields) => {
     if(!err) {
-      res.json({status: 'Diff Saved'});
+      res.status(200).send('Diff insertado!');
     } else {
-      console.log("err_diff");
-    }
-  });
-});
-
-// DELETE An Employee
-router.delete('/:id', (req, res) => {
-  const { id } = req.params;
-  mysqlConnection.query('DELETE FROM employee WHERE id = ?', [id], (err, rows, fields) => {
-    if(!err) {
-      res.json({status: 'Employee Deleted'});
-    } else {
-      console.log(err);
+      res.status(500).send('Operacion fallida al insertar diff!');
     }
   });
 });
@@ -154,5 +142,16 @@ router.put('/:id', (req, res) => {
   });
 });
 
+// DELETE An Employee
+/*router.delete('/:id', (req, res) => {
+  const { id } = req.params;
+  mysqlConnection.query('DELETE FROM employee WHERE id = ?', [id], (err, rows, fields) => {
+    if(!err) {
+      res.json({status: 'Employee Deleted'});
+    } else {
+      console.log(err);
+    }
+  });
+});*/
 
 module.exports = router;
