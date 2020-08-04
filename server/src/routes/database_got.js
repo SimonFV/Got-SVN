@@ -129,15 +129,16 @@ router.post('/diff', (req, res) => {
   });
 });
 
-// UPDATE An Employee
-router.put('/:id', (req, res) => {
-  const { name, salary } = req.body;
-  const { id } = req.params;
-  mysqlConnection.query('UPDATE employee SET? WHERE id = ?', [{name, salary}, id], (err, rows, fields) => {
+// UPDATE An campo DIFF (codigo_diff_anterior)
+router.put('/:id_diff', (req, res) => {
+  const { codigo_diff_anterior } = req.body;
+  const { id_diff } = req.params;
+  console.log(codigo_diff_anterior);
+  mysqlConnection.query('UPDATE diff SET codigo_diff_anterior = ? WHERE id_diff = ?', [codigo_diff_anterior, id_diff], (err, rows, fields) => {
     if(!err) {
-      res.json({status: 'Employee Updated'});
+      res.status(200).send('Diff actualizado!');
     } else {
-      console.log(err);
+      res.status(500).send('Operacion fallida al actualizar campo diff!');
     }
   });
 });
