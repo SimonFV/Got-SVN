@@ -6,16 +6,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED 11)
 
 set(src
     src/main.cpp
-    src/diff.cpp
     src/huffman.cpp
     src/md5.cpp
     src/client.cpp
+    src/commands.cpp
 )
 
 set(head
     include/client.hpp
     include/huffman.hpp
     include/md5.h
+    include/commands.hpp
 )
 
 include_directories(${PROJECT_SOURCE_DIR}/include/)
@@ -28,8 +29,8 @@ link_libraries(${JSONCPP_LIBRARIES})
 #Logging
 add_subdirectory(spdlog)
 add_subdirectory(cpr)
-add_subdirectory(jsoncons)
 
 add_executable(got ${src} ${head})
+set_target_properties(got PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}")
 
-target_link_libraries(got spdlog cpr::cpr jsoncons ${JSONCPP_LIBRARIES})
+target_link_libraries(got spdlog cpr::cpr ${JSONCPP_LIBRARIES})

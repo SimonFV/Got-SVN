@@ -1,13 +1,13 @@
 
 #include <client.hpp>
+#include <commands.hpp>
 
 int main(int argc, char *argv[])
-{   
+{
+    Command::thisPath = Command::get_selfpath();
+    Command::thisPath.erase(Command::thisPath.length() - 3, Command::thisPath.length());
 
-    string thisPath = get_selfpath();
-    thisPath.erase(thisPath.length() - 3, thisPath.length());
-    spdlog::info(thisPath);
-
+    /*
     // Metodo Post -> NO recibe nada 
     Client::getI()->POST("commit", thisPath + "../archivos_json/enviado.json");
     spdlog::info(Client::getI()->getStatus());
@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
     for (unsigned int i = 0; i < obj.size(); i++){
         spdlog::info("Diff: " + obj[i]["codigo_diff_posterior"].asString());
     }
+    */
 
     if (argc < 2)
     {
@@ -40,7 +41,7 @@ int main(int argc, char *argv[])
         else
         {
             spdlog::info("Iniciando el repositorio en la ruta actual.");
-            //INICIA EL REPOSITORIO
+            Command::init(argv[2]);
             spdlog::info("Repositorio {} listo.", argv[2]);
         }
     }
@@ -187,15 +188,15 @@ int main(int argc, char *argv[])
         spdlog::warn("Comando incorrecto.");
         spdlog::info("Para ver la lista de opciones disponibles utilice el comando: ./got help");
     }
-
-    diff(thisPath + "../repo/testAfter.cpp",
-         thisPath + "../repo/testBefore.cpp",
-         thisPath + "../repo/test.patch");
-
-    applyChanges(thisPath + "../repo/testBefore.cpp",
-                 thisPath + "../repo/test.patch");
-
     /*
+    Command::diff(Command::thisPath + "../repo/testAfter.cpp",
+                  Command::thisPath + "../repo/testBefore.cpp",
+                  Command::thisPath + "../repo/test.patch");
+
+    Command::applyChanges(Command::thisPath + "../repo/testBefore.cpp",
+                          Command::thisPath + "../repo/test.patch");
+
+    
     //EXTRAER DESDE STRING
     std::string data = R"(
     {

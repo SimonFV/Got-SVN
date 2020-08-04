@@ -32,11 +32,6 @@ void Client::setBody(string jsonFile)
     jsonStream.close();
 }
 
-jsoncons::json Client::getReceivedBody()
-{
-    return Json_received;
-}
-
 int Client::getStatus()
 {
     return status_response;
@@ -51,54 +46,53 @@ void Client::limpiar()
 
 void Client::POST(string _url, string jsonFile)
 {
-
     limpiar();
     setBody(jsonFile);
     cpr::Response r = cpr::Post(cpr::Url{url + _url},
                                 cpr::Body{post_body},
                                 cpr::Header{{"Content-Type", "application/json"}});
-
-    spdlog::info(r.text);
+    ofstream fs(Command::thisPath + ".got/recibido.json");
+    fs << r.text << endl;
+    fs.close();
     status_response = r.status_code;
 }
 
 void Client::GET(string _url, string jsonFile)
 {
-
     limpiar();
     setBody(jsonFile);
     cpr::Response r = cpr::Get(cpr::Url{url + _url},
-                                cpr::Body{post_body},
-                                cpr::Header{{"Content-Type", "application/json"}});
-
-
-    // Copiar datos al json
-    string thisPath = get_selfpath();
-    thisPath.erase(thisPath.length() - 3, thisPath.length());
-    ofstream fs(thisPath + "../archivos_json/recibido.json");
+                               cpr::Body{post_body},
+                               cpr::Header{{"Content-Type", "application/json"}});
+    ofstream fs(Command::thisPath + ".got/recibido.json");
     fs << r.text << endl;
     fs.close();
-
     status_response = r.status_code;
 }
 
 void Client::PUT(string _url, string jsonFile)
 {
-
     limpiar();
     setBody(jsonFile);
     cpr::Response r = cpr::Put(cpr::Url{url + _url},
                                cpr::Body{post_body},
                                cpr::Header{{"Content-Type", "application/json"}});
-    Json_received = jsoncons::json::parse(r.text);
+    ofstream fs(Command::thisPath + ".got/recibido.json");
+    fs << r.text << endl;
+    fs.close();
+    status_response = r.status_code;
     status_response = r.status_code;
 }
 
 void Client::DELETE(string _url)
 {
-
     limpiar();
-    cpr::Response r = cpr::Delete(cpr::Url{url + _url});
-    Json_received = jsoncons::json::parse(r.text);
+    cpr::Response r = cpr::Delete(cpr::Url{url + _url},
+                                  cpr::Body{post_body},
+                                  cpr::Header{{"Content-Type", "application/json"}});
+    status_response = r.status_code;
+    ofstream fs(Command::thisPath + ".got/recibido.json");
+    fs << r.text << endl;
+    fs.close();
     status_response = r.status_code;
 }

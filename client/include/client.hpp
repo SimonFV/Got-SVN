@@ -4,24 +4,21 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <bits/stdc++.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include <cpr/cpr.h>
-#include <jsoncons/json.hpp>
 #include <huffman.hpp>
 #include "md5.h"
 #include <string.h>
 #include <unistd.h>
 #include <iostream>
 #include <jsoncpp/json/json.h>
+#include <commands.hpp>
 
 using namespace std;
-
-void diff(string fileAfter, string fileBefore, string result);
-
-void applyChanges(string original, string changes);
-
-string get_selfpath();
 
 class Client
 {
@@ -29,7 +26,6 @@ private:
     static Client *client_instance;
     string post_body, received_body, url;
     int status_response;
-    jsoncons::json Json_received;
 
 private:
     /**
@@ -67,8 +63,8 @@ public:
 
 public:
     void setBody(string jsonFile);
-    jsoncons::json getReceivedBody();
     int getStatus();
+    string getPath();
 
     void POST(string _url, string jsonFile);
     void GET(string _url, string jsonFile);
