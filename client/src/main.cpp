@@ -9,15 +9,15 @@ int main(int argc, char *argv[])
 
     /*
     // Metodo Post -> NO recibe nada 
-    Client::getI()->POST("commit", thisPath + "../archivos_json/enviado.json");
+    Client::getI()->POST("commit", thisPath + ".got/enviado.json");
     spdlog::info(Client::getI()->getStatus());
 
     // Metodo Get -> Recibe algo 
-    Client::getI()->GET("commit_posterior", thisPath + "../archivos_json/recibido.json");
+    Client::getI()->GET("commit_posterior", thisPath + ".got/recibido.json");
     spdlog::info(Client::getI()->getStatus());
 
     // Mostrar lo recibido desde el .json
-    ifstream ifs(thisPath + "../archivos_json/recibido.json");
+    ifstream ifs(thisPath + ".got/recibido.json");
     Json::Reader reader;
     Json::Value obj;
     reader.parse(ifs, obj); 
@@ -189,44 +189,15 @@ int main(int argc, char *argv[])
         spdlog::info("Para ver la lista de opciones disponibles utilice el comando: ./got help");
     }
     /*
-    Command::diff(Command::thisPath + "../repo/testAfter.cpp",
-                  Command::thisPath + "../repo/testBefore.cpp",
+    Command::diff(Command::thisPath + "repo/testAfter.cpp",
+                  Command::thisPath + "repo/testBefore.cpp",
                   Command::thisPath + "../repo/test.patch");
 
-    Command::applyChanges(Command::thisPath + "../repo/testBefore.cpp",
-                          Command::thisPath + "../repo/test.patch");
+    Command::applyChanges(Command::thisPath + "repo/testBefore.cpp",
+                          Command::thisPath + "repo/test.patch");
 
     
-    //EXTRAER DESDE STRING
-    std::string data = R"(
-    {
-        "application": "hiking",
-        "rater": "HikingAsylum",
-        "assertion": "advanced",
-        "reputons": [
-        {
-        
-           "rated": "Marilyn C",
-           "rating": 0.90,
-           "confidence": 0.99
-        }
-        ]
-    }
-    )";
-
-    // Parse the string of data into a json value
-    jsoncons::json j = jsoncons::json::parse(data);
-
-    spdlog::info(j["application"].as<std::string>());
-
-    const jsoncons::json &v = j["reputons"];
-
-    // Iterate over reputons array
-    for (const auto &item : v.array_range())
-    {
-        // Access rated as string and rating as double
-        std::cout << item["rated"].as<std::string>() << ", " << item["rating"].as<double>() << "\n";
-    }
+    
 
     // ------ Codigo para probar Huffman ----------------
 
