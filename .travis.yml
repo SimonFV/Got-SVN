@@ -14,6 +14,24 @@ addons:
       
 install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8 -std=c++11 -DENABLE_REINFORCEMENT_LEARNING" CC="gcc-4.8"; fi
+  - # first we create a directory for the CMake binaries
+  - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
+  - mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
+  # we use wget to fetch the cmake binaries
+  - travis_retry wget --no-check-certificate https://github.com/Kitware/CMake/releases/download/v3.15.2/cmake-3.15.2.tar.gz
+  # extract the binaries; the output here is quite lengthy,
+  # so we swallow it to not clutter up the travis console
+  - tar -zxvf cmake-3.15.2.tar.gz > /dev/null
+  - cd cmake-3.15.2
+  - ./bootstrap
+  - make
+  - sudo make install
+  # add both the top-level directory and the bin directory from the archive
+  # to the system PATH. By adding it to the front of the path we hide the
+  # preinstalled CMake with our own.
+  - PATH=${DEPS_DIR}/cmake-install:${DEPS_DIR}/cmake-install/bin:$PATH
+  # don't forget to switch back to the main build directory once you are done
+  - cd ${TRAVIS_BUILD_DIR}
 
 script:
   # Adds the necesary libraries
