@@ -17,10 +17,11 @@ install:
 
 script:
   # Adds the spdlog library
-  - cd server
+  - sudo apt-get install libjsoncpp-dev
+  - cd client
   - git clone https://github.com/gabime/spdlog.git
+  - git clone https://github.com/whoshuu/cpr.git
   # Prepare the build system
-  - cd ..
   - mkdir build && cd build
   - cmake ..
   - cd ..
