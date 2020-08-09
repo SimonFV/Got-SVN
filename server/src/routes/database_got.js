@@ -2,16 +2,32 @@ const express = require('express');
 const router = express.Router();
 
 const mysqlConnection  = require('../database.js');
+var md5 = require('md5');
 
 // Volver un archivo a un commit posterior
+router.get('/codigo_huffman', (req, res) => {
+  var { id_commit, nombre_archivo} = req.body;
+  mysqlConnection.query("SELECT CONVERT(archivo.codigo_huffman USING utf8), archivo.simbolo_codigo " +
+              "FROM archivo JOIN commit ON archivo.relacion_commit = commit.id_commit " +
+              "WHERE commit.id_commit ='" + id_commit + "' AND archivo.nombre_archivo = '" + 
+               nombre_archivo + "' " , {id_commit, nombre_archivo}, (err, rows, fields) => {
+    if(!err) {
+      res.status(200).json({rows});
+    } else {
+      res.status(500).send('Operacion fallida al solicitar huffman!');
+    }
+  }); 
+});
+ 
+// Volver un archivo a un commit posterior
 router.get('/commit_posterior', (req, res) => {
-  const { hash_commit, nombre_archivo} = req.body;
+  const { id_commit, nombre_archivo} = req.body;
   mysqlConnection.query("SELECT diff.codigo_diff_posterior " +
               "FROM diff JOIN commit ON diff.relacion_commit = commit.id_commit " +
-              "WHERE commit.hash_commit ='" + hash_commit + "' AND diff.nombre_archivo = '" + 
-               nombre_archivo + "' " , {hash_commit, nombre_archivo}, (err, rows, fields) => {
+              "WHERE commit.id_commit ='" + id_commit + "' AND diff.nombre_archivo = '" + 
+               nombre_archivo + "' " , {id_commit, nombre_archivo}, (err, rows, fields) => {
     if(!err) {
-      res.status(200).json(rows);
+      res.status(200).json({rows});
     } else {
       res.status(500).send('Operacion fallida al solicitar ir a commit posterior!');
     }
@@ -20,13 +36,13 @@ router.get('/commit_posterior', (req, res) => {
 
 // Devolver un archivo a un commit anterior
 router.get('/commit_anterior', (req, res) => {
-  const { hash_commit, nombre_archivo} = req.body;
+  const { id_commit, nombre_archivo} = req.body;
   mysqlConnection.query("SELECT diff.codigo_diff_anterior " +
               "FROM diff JOIN commit ON diff.relacion_commit = commit.id_commit " +
-              "WHERE commit.hash_commit ='" + hash_commit + "' AND diff.nombre_archivo = '" + 
-               nombre_archivo + "' " , {hash_commit, nombre_archivo}, (err, rows, fields) => {
+              "WHERE commit.id_commit ='" + id_commit + "' AND diff.nombre_archivo = '" + 
+               nombre_archivo + "' " , {id_commit, nombre_archivo}, (err, rows, fields) => {
     if(!err) {
-      res.status(200).json(rows);
+      res.status(200).json({rows});
     } else {
       res.status(500).send('Operacion fallida al solicitar devolver commit anterior!');
     }
@@ -95,10 +111,13 @@ router.get('/agregados_commit', (req, res) => {
 
 // INSERT AN NEW COMMIT
 router.post('/commit', (req, res) => {
-  const {hash_commit, comentario} = req.body;
+  var {hash_commit, comentario} = req.body;
+  // Crear hash
+  hash_commit = md5(hash_commit);
   mysqlConnection.query('INSERT INTO commit SET?', {hash_commit, comentario}, (err, rows, fields) => {
     if(!err) {
-      res.status(200).send('Commit insertado!');
+      res.status(200).json( {"hash_commit": hash_commit });
+      console.log("Commit insertado!");
     } else {
       res.status(500).send('Operacion fallida al insertar commit!');
     }
@@ -107,10 +126,11 @@ router.post('/commit', (req, res) => {
 
 // INSERT AN NEW ARCHIVO
 router.post('/archivo', (req, res) => {
-  const {nombre_archivo, codigo_huffman, relacion_commit} = req.body;
-  mysqlConnection.query('INSERT INTO archivo SET?', {nombre_archivo, codigo_huffman, relacion_commit}, (err, rows, fields) => {
+  const {nombre_archivo, codigo_huffman, simbolo_codigo, relacion_commit} = req.body;
+  mysqlConnection.query('INSERT INTO archivo SET?', {nombre_archivo, codigo_huffman, simbolo_codigo, relacion_commit}, (err, rows, fields) => {
     if(!err) {
       res.status(200).send('Archivo insertado!');
+      console.log("Archivo insertado!");
     } else {
       res.status(500).send('Operacion fallida al insertar archivo!');
     }
@@ -119,10 +139,11 @@ router.post('/archivo', (req, res) => {
 
 // INSERT AN NEW DIFF
 router.post('/diff', (req, res) => {
-  const {nombre_archivo, codigo_diff_anterior, codigo_diff_siguiente, checksum, relacion_commit} = req.body;
-  mysqlConnection.query('INSERT INTO diff SET?', {nombre_archivo, codigo_diff_anterior, codigo_diff_siguiente, checksum, relacion_commit}, (err, rows, fields) => {
+  const {nombre_archivo, codigo_diff_anterior, codigo_diff_posterior, checksum, relacion_commit} = req.body;
+  mysqlConnection.query('INSERT INTO diff SET?', {nombre_archivo, codigo_diff_anterior, codigo_diff_posterior, checksum, relacion_commit}, (err, rows, fields) => {
     if(!err) {
       res.status(200).send('Diff insertado!');
+      console.log("Diff insertado!");
     } else {
       res.status(500).send('Operacion fallida al insertar diff!');
     }

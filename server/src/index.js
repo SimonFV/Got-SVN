@@ -1,11 +1,8 @@
 const express = require('express');
 const app = express();
-var md5 = require('md5');
- 
-console.log(md5('123'));
 
 // Settings
-app.set('port', process.env.PORT || 9000);
+app.set('port', process.env.PORT || 3000);
 
 // Middlewares -> Funciones que se ejecutan antes de procesar algo
 app.use(express.json());
