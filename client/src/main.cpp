@@ -7,25 +7,6 @@ int main(int argc, char *argv[])
     Command::thisPath = Command::get_selfpath();
     Command::thisPath.erase(Command::thisPath.length() - 3, Command::thisPath.length());
 
-    /*
-    // Metodo Post -> NO recibe nada 
-    Client::getI()->POST("commit", thisPath + ".got/enviado.json");
-    spdlog::info(Client::getI()->getStatus());
-
-    // Metodo Get -> Recibe algo 
-    Client::getI()->GET("commit_posterior", thisPath + ".got/recibido.json");
-    spdlog::info(Client::getI()->getStatus());
-
-    // Mostrar lo recibido desde el .json
-    ifstream ifs(thisPath + ".got/recibido.json");
-    Json::Reader reader;
-    Json::Value obj;
-    reader.parse(ifs, obj); 
-    for (unsigned int i = 0; i < obj.size(); i++){
-        spdlog::info("Diff: " + obj[i]["codigo_diff_posterior"].asString());
-    }
-    */
-
     if (argc < 2)
     {
         spdlog::warn("Argumentos insuficientes.");
@@ -191,62 +172,6 @@ int main(int argc, char *argv[])
         spdlog::warn("Comando incorrecto.");
         spdlog::info("Para ver la lista de opciones disponibles utilice el comando: ./got help");
     }
-    /*
-    Command::diff(Command::thisPath + "repo/testAfter.cpp",
-                  Command::thisPath + "repo/testBefore.cpp",
-                  Command::thisPath + "../repo/test.patch");
 
-    Command::applyChanges(Command::thisPath + "repo/testBefore.cpp",
-                          Command::thisPath + "repo/test.patch");
-
-    
-    
-
-    // ------ Codigo para probar Huffman ----------------
-
-    fstream ficheroEntrada;
-    string nombre = "/home/davidaqc/Documents/Got-SVN/client/src/huffman.cpp";
-    string linea_texto;
-    string texto_final;
-
-    ficheroEntrada.open(nombre.c_str(), ios::in);
-    if (ficheroEntrada.is_open())
-    {
-        while (!ficheroEntrada.eof())
-        {
-            getline(ficheroEntrada, linea_texto);
-            texto_final += linea_texto + "\n";
-        }
-        ficheroEntrada.close();
-    }
-    else
-    {
-        std::cout << "Fichero inexistente o faltan permisos para abrirlo" << endl;
-    }
-
-    buildHuffmanTree(texto_final);
-    string cod_binario = pedir_codigoBinario();
-    string sim_cod = pedir_simboloCodigo();
-    string cadena_descomprimida = descomprimir_data(cod_binario, sim_cod);
-
-    if (cadena_descomprimida == texto_final)
-    {
-        cout << "Las cadenas son iguales" << endl;
-    }
-    else
-    {
-        cout << "Las cadenas NO son iguales" << endl;
-    }
-
-    // Copiar datos en txt
-    ofstream fs("/home/davidaqc/Documents/Got-SVN/client/src/prueba.txt");
-    fs << cadena_descomprimida << endl;
-    fs.close();
-
-    // ------ Codigo para probar MD5 ----------------
-
-    string password = md5("1123");
-    cout << password << endl;
-    */
     return 0;
 }

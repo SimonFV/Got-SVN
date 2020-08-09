@@ -3,7 +3,7 @@
 
 // Listar los directorios que hay dentro
 void ControlServerCliente::list_dir(string dir) {
-    dir = "/home/davidaqc/Documents/Got-SVN/client/build";
+    dir = Command::thisPath;
     DIR * directorio;
     struct dirent * elemento;
     string elem;
