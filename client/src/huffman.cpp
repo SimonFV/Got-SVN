@@ -3,6 +3,8 @@
 #include <queue>
 #include <unordered_map>
 #include <fstream>
+#include <client.hpp>
+
 using namespace std;
 
 vector< pair <std::string, std::string> > vect;
@@ -195,4 +197,28 @@ string pedir_codigoBinario(){
 
 string pedir_simboloCodigo(){
 	return str2;
+}
+
+string generar_string_de_archivo(string ruta){
+    fstream ficheroEntrada;
+    string nombre = ruta;
+    string linea_texto;
+    string texto_final;
+
+    ficheroEntrada.open(nombre.c_str(), ios::in);
+    if (ficheroEntrada.is_open())
+    {
+        while (!ficheroEntrada.eof())
+        {
+            getline(ficheroEntrada, linea_texto);
+            texto_final += linea_texto + "\n";
+        }
+        ficheroEntrada.close();
+    }
+    else
+    {
+        spdlog::error("Fichero inexistente o faltan permisos para abrirlo (Huffman)");
+    }
+	texto_final.erase(texto_final.size() - 1);
+	return texto_final;
 }
