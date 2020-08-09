@@ -56,6 +56,7 @@ int main(int argc, char *argv[])
         {
             //AGREGANDO TODOS LOS ARCHIVOS
             spdlog::info("Agregando todos los archivos al commit.");
+            Command::add(argv[2]);
         }
         else
         {
@@ -63,6 +64,7 @@ int main(int argc, char *argv[])
             {
                 //AGREGANDO ARCHIVO
                 spdlog::info("Agregando el archivo {} al commit.", argv[i]);
+                Command::add(argv[2]);
             }
         }
     }
@@ -82,6 +84,7 @@ int main(int argc, char *argv[])
                 msg += " ";
             }
             //REALIZA EL COMMIT
+            Command::commit(argv[2]);
             spdlog::info("Commit realizado: {}", msg);
         }
     }

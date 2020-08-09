@@ -10,6 +10,7 @@ set(src
     src/md5.cpp
     src/client.cpp
     src/commands.cpp
+    src/controlServerCliente.cpp
 )
 
 set(head
@@ -17,6 +18,7 @@ set(head
     include/huffman.hpp
     include/md5.h
     include/commands.hpp
+    include/controlServerCliente.hpp
 )
 
 include_directories(${PROJECT_SOURCE_DIR}/include/)
@@ -31,6 +33,6 @@ add_subdirectory(spdlog)
 add_subdirectory(cpr)
 
 add_executable(got ${src} ${head})
-set_target_properties(got PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}")
+#set_target_properties(got PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}")
 
 target_link_libraries(got spdlog cpr::cpr ${JSONCPP_LIBRARIES})

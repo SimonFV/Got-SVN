@@ -11,6 +11,9 @@ public:
     static void applyChanges(string original, string changes);
     static string get_selfpath();
     static void init(string repoName);
+    static void add(string archivos);
+    static void commit(string mensaje);
+    static string diff_a_string();
 };
 
 #endif
