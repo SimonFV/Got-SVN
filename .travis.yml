@@ -16,7 +16,7 @@ install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8 -std=c++11 -DENABLE_REINFORCEMENT_LEARNING" CC="gcc-4.8"; fi
 
 script:
-  # Adds the spdlog library
+  # Adds the necesary libraries
   - sudo apt-get install libjsoncpp-dev
   - cd client
   - git clone https://github.com/gabime/spdlog.git
