@@ -34,6 +34,7 @@ install:
 script:
   # Adds the necesary libraries
   - sudo apt-get install libjsoncpp-dev
+  - sudo ln -s /usr/include/jsoncpp/json/ /usr/include/json
   - cd client
   - git clone https://github.com/gabime/spdlog.git
   - git clone https://github.com/whoshuu/cpr.git
