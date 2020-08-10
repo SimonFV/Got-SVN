@@ -4,11 +4,19 @@ use DB_GOT;
 drop table diff;
 drop table archivo;
 drop table commit;
+drop table repositorio;
+
+CREATE TABLE repositorio (
+  id_repositorio INT PRIMARY KEY AUTO_INCREMENT,
+  nombre_repositorio VARCHAR(128) NOT NULL
+);
 
 CREATE TABLE commit (
   id_commit INT PRIMARY KEY AUTO_INCREMENT,
   hash_commit VARCHAR(128) NOT NULL,
-  comentario VARCHAR(128) NOT NULL
+  comentario VARCHAR(128) NOT NULL,
+  relacion_repositorio INT NOT NULL,
+  FOREIGN KEY (relacion_repositorio) REFERENCES repositorio(id_repositorio)
 );
 
 CREATE TABLE diff (

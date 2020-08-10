@@ -109,12 +109,24 @@ router.get('/agregados_commit', (req, res) => {
   });  
 });
 
+// INSERT AN NEW REPOSITORY
+router.post('/repositorio', (req, res) => {
+  var {nombre_repositorio} = req.body;
+  mysqlConnection.query('INSERT INTO repositorio SET?', {nombre_repositorio}, (err, rows, fields) => {
+    if(!err) {
+      res.status(200).json( {"id_repositorio": rows.insertId });
+    } else {
+      res.status(500).send('Operacion fallida al insertar repositorio!');
+    }
+  });
+});
+
 // INSERT AN NEW COMMIT
 router.post('/commit', (req, res) => {
-  var {hash_commit, comentario} = req.body;
+  var {hash_commit, comentario, relacion_repositorio} = req.body;
   // Crear hash
   hash_commit = md5(hash_commit);
-  mysqlConnection.query('INSERT INTO commit SET?', {hash_commit, comentario}, (err, rows, fields) => {
+  mysqlConnection.query('INSERT INTO commit SET?', {hash_commit, comentario, relacion_repositorio}, (err, rows, fields) => {
     if(!err) {
       res.status(200).json( {"hash_commit": hash_commit });
       console.log("Commit insertado!");

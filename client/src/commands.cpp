@@ -77,21 +77,40 @@ void Command::init(string repoName)
 
     // Crea la estructura control cliente-server
     Json::Value root;
+    root["id_repositorio"] = 0;
     root["commit"] = 0;
     root["hash_commit"] = "";
     root["archivos"];
     control.escribir_json(".got/control_cliente.json", root);
 
     // Agregar directorios al json
-    const char * dir_name = thisPath.c_str();
-    control.list_dir (dir_name);
+    const char *dir_name = thisPath.c_str();
+    control.list_dir(dir_name);
+
+    // Escribe la estructura repositorio y envia datos
+    Json::Value root0;
+    root0["nombre_repositorio"] = repoName;
+    control.escribir_json(".got/enviado.json", root0);
+    Client::getI()->POST("repositorio", thisPath + ".got/enviado.json");
+    spdlog::info("Repositorio agregado en el server!");
+    spdlog::info(Client::getI()->getStatus());
+
+    // Guardar el # del repositorio
+    string dato_retornado = control.leer_json(".got/recibido.json", "id_repositorio");
+    // Leer archivo para acualizarlo
+    ifstream ifs1(Command::thisPath + ".got/control_cliente.json");
+    Json::Reader reader1;
+    Json::Value root1;
+    reader1.parse(ifs1, root1);
+    root1["id_repositorio"] = dato_retornado;
+    control.escribir_json(".got/control_cliente.json", root1);
 }
 
 void Command::add(string solicitud_archivos)
 {
     // Antes de agregar agregar los archivos, actualizar directorio
-    const char * dir_name = thisPath.c_str();
-    control.list_dir (dir_name);
+    const char *dir_name = thisPath.c_str();
+    control.list_dir(dir_name);
 
     // Leer control_cliente.json
     ifstream ifs(Command::thisPath + ".got/control_cliente.json");
@@ -155,6 +174,9 @@ void Command::add(string solicitud_archivos)
 void Command::commit(string comentario)
 {
 
+    // Guardar el # repo actual
+    string repo_actual = control.leer_json(".got/control_cliente.json", "id_repositorio");
+
     // Guardar el # commit actual
     string dato_retornado = control.leer_json(".got/control_cliente.json", "commit");
     string dato_retornado2;
@@ -165,6 +187,7 @@ void Command::commit(string comentario)
     Json::Value root;
     root["hash_commit"] = relacion_actual_commit;
     root["comentario"] = comentario;
+    root["relacion_repositorio"] = stoi(repo_actual);
     control.escribir_json(".got/enviado.json", root);
     Client::getI()->POST("commit", thisPath + ".got/enviado.json");
     spdlog::info("Commit agregado en el server!");
@@ -299,11 +322,10 @@ void Command::commit(string comentario)
                 spdlog::info("Diff agregado en el server!");
                 spdlog::info(Client::getI()->getStatus());
             }
-            
+
             // Cambiar estado modificado -> server
             root1["archivos"][it.key().asString()] = "server";
             control.escribir_json(".got/control_cliente.json", root1);
         }
     }
-
 }
