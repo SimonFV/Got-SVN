@@ -85,6 +85,12 @@ void decode(Node* root, int &index, string str)
 // Builds Huffman Tree and decode given input text
 void buildHuffmanTree(string text)
 {
+
+	vect.clear();
+    str = "";
+    str2 = "";
+    cadena_descomprimida = "";
+	
 	// count frequency of appearance of each character
 	// and store it in a map
 	unordered_map<char, int> freq;
