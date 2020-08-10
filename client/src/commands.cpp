@@ -83,13 +83,15 @@ void Command::init(string repoName)
     control.escribir_json(".got/control_cliente.json", root);
 
     // Agregar directorios al json
-    control.list_dir(thisPath);
+    const char * dir_name = thisPath.c_str();
+    control.list_dir (dir_name);
 }
 
 void Command::add(string solicitud_archivos)
 {
     // Antes de agregar agregar los archivos, actualizar directorio
-    control.list_dir(Command::thisPath);
+    const char * dir_name = thisPath.c_str();
+    control.list_dir (dir_name);
 
     // Leer control_cliente.json
     ifstream ifs(Command::thisPath + ".got/control_cliente.json");

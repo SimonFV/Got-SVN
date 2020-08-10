@@ -17,9 +17,8 @@ class ControlServerCliente
 {
          
     public:
-        void list_dir(string dir);
-        void control_local_server (string elem, string tipo_control);
-        int auxiliar_control_local_server(string elem, string key);
+        void list_dir(const char * dir_name);
+        void control_local_server (string elem);
         void escribir_json(string ruta, Json::Value root);
         std::string leer_json(string ruta, string dato);
         std::string leer_json2(string ruta, string dato);
