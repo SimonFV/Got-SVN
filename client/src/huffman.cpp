@@ -155,6 +155,11 @@ void buildHuffmanTree(string text)
 
 string descomprimir_data(string codigo_binario, string simbolo_codigo){
 	
+	vect.clear();
+    str = "";
+    str2 = "";
+    cadena_descomprimida = "";
+	
 	// Reconstruir vector desde el string simbolo_codigo
 	string simbolo;
 	string codigo;
