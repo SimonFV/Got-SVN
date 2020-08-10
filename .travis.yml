@@ -15,8 +15,6 @@ addons:
       
 install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8 -std=c++11 -DENABLE_REINFORCEMENT_LEARNING" CC="gcc-4.8"; fi
-  - sudo apt-get -y install libjsoncpp-dev
-  - PATH=/usr/include/jsoncpp/json/:/usr/include/json:$PATH
   # first we create a directory for the CMake binaries
   # first we create a directory for the CMake binaries
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
@@ -40,6 +38,7 @@ script:
   - cd client
   - git clone https://github.com/gabime/spdlog.git
   - git clone https://github.com/whoshuu/cpr.git
+  - git clone https://github.com/open-source-parsers/jsoncpp.git
   # Prepare the build 
   - cd ..
   - mkdir build && cd build
