@@ -2,10 +2,6 @@ language: cpp
 os: linux
 compiler: gcc
 
-before_install:
-  - sudo apt-get -y install libjsoncpp-dev
-  - sudo ln -s /usr/include/jsoncpp/json/ /usr/include/json
-
 addons:
   sonarcloud:
     organization: "simonfv"
@@ -19,6 +15,8 @@ addons:
       
 install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8 -std=c++11 -DENABLE_REINFORCEMENT_LEARNING" CC="gcc-4.8"; fi
+  - sudo apt-get -y install libjsoncpp-dev
+  - PATH=/usr/include/jsoncpp/json/:/usr/include/json:$PATH
   # first we create a directory for the CMake binaries
   # first we create a directory for the CMake binaries
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
@@ -35,6 +33,7 @@ install:
   - PATH=${DEPS_DIR}/cmake-install:${DEPS_DIR}/cmake-install/bin:$PATH
   # don't forget to switch back to the main build directory once you are done
   - cd ${TRAVIS_BUILD_DIR}
+  
 
 script:
   # Adds the necesary libraries
