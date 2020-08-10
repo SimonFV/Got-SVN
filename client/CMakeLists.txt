@@ -23,16 +23,12 @@ set(head
 
 include_directories(${PROJECT_SOURCE_DIR}/include/)
 
-# Necesario para json
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(JSONCPP jsoncpp)
-link_libraries(${JSONCPP_LIBRARIES})
-
 #Logging
 add_subdirectory(spdlog)
 add_subdirectory(cpr)
+add_subdirectory(jsoncpp)
 
 add_executable(got ${src} ${head})
 #set_target_properties(got PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}")
 
-target_link_libraries(got spdlog cpr::cpr ${JSONCPP_LIBRARIES})
+target_link_libraries(got spdlog cpr::cpr jsoncpp)
