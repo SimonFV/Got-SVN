@@ -26,9 +26,9 @@ include_directories(${PROJECT_SOURCE_DIR}/include/)
 #Logging
 add_subdirectory(spdlog)
 add_subdirectory(cpr)
-add_subdirectory(jsoncpp)
 
 add_executable(got ${src} ${head})
 #set_target_properties(got PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}")
+target_link_directories(got PUBLIC /usr/include/jsoncpp/json/ PUBLIC /usr/include/json/)
 
 target_link_libraries(got spdlog cpr::cpr jsoncpp)

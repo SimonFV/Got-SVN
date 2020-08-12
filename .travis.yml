@@ -8,13 +8,13 @@ addons:
   token:
     secure: "Ttxgpzj8tX8slcGVuxQxvdNmP4fcjmJp1g9vxTHT/WdbpUmZRcMEPJPSTzZbxx+poxpmvwHRzNKR4ql8MRJ74OiSVMXRIwmZlF52saQ8ISYMdQlGOjzZv45fENXad4EBmgT2+w+ycVPcTZBnWaXQMKeYLkwbvNV40JB7DAOhgZlTi6WZjEeuel9JRAV8ffVjlUg2v04wUC07vt55xN+FUXHpQCBOINjvbXfIVuZ7YfapLTaSUPw46Idk7uYOQ1cI1DMkeHnxepI5FVewC9N22OqGVsmZ6UAr1e6yMYAeZyXr1HwXSkZO/BwEvn50Z2dK99TPYx/4JszqMyEmTiKCp5ZgpaDHG3hY9S8+wQmZRLYAS+pC2we6IM0YA688S227bbILR5ALd+VXBcXgx8AEhwHG+qZSoWwI1DFxabsOS2vQ/m+Ids8EfxgIJRmX8Z3EmD8yjhwp8Js8NRoz4HBgizFvtp3XCeLZBbm9VaihERju9hkhVCts9rVyZOTMHivfi+4ZZ5JVcFcmu1BudBKQaXQOI915Xa2kdL4i8MJDkN6v9UCKhEqob887tm721RM+M0A+9Oxx4hc4uRoPXjoFuW0kbxp1ySXsMolUwEyIyJLKamus/SahKAhI0WzP4HNTewun9aRH2uWCxTvV3hHldwaCRgklIesB70n95G9uX2A="
   apt:
-    update: true
     packages:
       - gcc-4.8
       - g++-4.8
       
 install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8 -std=c++11 -DENABLE_REINFORCEMENT_LEARNING" CC="gcc-4.8"; fi
+  - sudo apt-get -y install libjsoncpp-dev
   # first we create a directory for the CMake binaries
   # first we create a directory for the CMake binaries
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
@@ -38,7 +38,6 @@ script:
   - cd client
   - git clone https://github.com/gabime/spdlog.git
   - git clone https://github.com/whoshuu/cpr.git
-  - git clone https://github.com/open-source-parsers/jsoncpp.git
   # Prepare the build 
   - cd ..
   - mkdir build && cd build
