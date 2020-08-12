@@ -26,7 +26,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include/)
 #Logging
 add_subdirectory(spdlog)
 add_subdirectory(cpr)
-link_directories(PUBLIC /usr/include/jsoncpp/json/)
+link_directories(PUBLIC /usr/include/jsoncpp/json/ PUBLIC /usr/include/json/)
 
 add_executable(got ${src} ${head})
 #set_target_properties(got PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}")
