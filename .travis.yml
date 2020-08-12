@@ -31,6 +31,9 @@ install:
   - PATH=${DEPS_DIR}/cmake-install:${DEPS_DIR}/cmake-install/bin:$PATH
   # don't forget to switch back to the main build directory once you are done
   - cd ${TRAVIS_BUILD_DIR}
+  - PATH=$PATH:/usr/include/jsoncpp/json/
+  - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/include/jsoncpp/json/
+  - DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/usr/include/jsoncpp/json/
   
 
 script:
