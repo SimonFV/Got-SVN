@@ -2,4 +2,4 @@
 /build/
 got
 .gotignore
-/.got/
+.got

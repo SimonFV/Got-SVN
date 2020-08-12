@@ -9,20 +9,19 @@
 #include <unistd.h>
 #include <fstream>
 #include <vector>
-#include <jsoncpp/json/json.h> 
+#include <jsoncpp/json/json.h>
 
 using namespace std;
 
-class ControlServerCliente
+class Control
 {
-         
-    public:
-        void list_dir(const char * dir_name);
-        void control_local_server (string elem);
-        void escribir_json(string ruta, Json::Value root);
-        std::string leer_json(string ruta, string dato);
-        std::string leer_json2(string ruta, string dato);
-        
+public:
+    static void list_dir(const char *dir_name);
+    static void control_local_server(string elem);
+    static void escribir_json(string ruta, Json::Value root);
+    static std::string leer_json(string ruta, string dato);
+    static std::string leer_json2(string ruta, string dato);
+    static bool isIgnored(string ruta);
 };
 
 #endif

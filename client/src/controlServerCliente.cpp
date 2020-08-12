@@ -1,8 +1,30 @@
 #include <client.hpp>
 #include <controlServerCliente.hpp>
 
+//Revisa si el archivo o carpeta esta en la lista del .gotignore
+bool Control::isIgnored(string ruta)
+{
+    fstream gotignore;
+    string line = "";
+
+    gotignore.open(Command::thisPath + ".gotignore");
+    if (gotignore.is_open())
+    {
+        while (!gotignore.eof())
+        {
+            getline(gotignore, line);
+            if (strcmp(ruta.c_str(), line.c_str()) == 0)
+            {
+                return true;
+            }
+        }
+        gotignore.close();
+    }
+    return false;
+}
+
 // Listar los directorios que hay dentro
-void ControlServerCliente::list_dir(const char *dir_name)
+void Control::list_dir(const char *dir_name)
 {
     DIR *d;
     d = opendir(dir_name);
@@ -26,9 +48,12 @@ void ControlServerCliente::list_dir(const char *dir_name)
             string ruta1 = dir_name;
             string ruta2 = d_name;
             string ruta3 = ruta1 + "/" + ruta2;
+            ruta3.erase(0, Command::thisPath.size() + 1);
 
-            string quitar_ruta_actual = Command::thisPath;
-            control_local_server(ruta3.erase(0, quitar_ruta_actual.size()));
+            if (strcmp(ruta3.c_str(), "got"))
+            {
+                control_local_server(ruta3);
+            }
         }
 
         if (entry->d_type & DT_DIR)
@@ -45,18 +70,23 @@ void ControlServerCliente::list_dir(const char *dir_name)
                 {
                     exit(EXIT_FAILURE);
                 }
-                list_dir(path);
+                string temp = path;
+                temp.erase(0, Command::thisPath.length() + 1);
+                if (strcmp(temp.c_str(), ".got"))
+                {
+                    list_dir(path);
+                }
             }
         }
     }
-    
+
     if (closedir(d))
     {
         exit(EXIT_FAILURE);
     }
 }
 
-void ControlServerCliente::control_local_server(string elem)
+void Control::control_local_server(string elem)
 {
 
     ifstream ifs(Command::thisPath + ".got/control_cliente.json");
@@ -86,7 +116,7 @@ void ControlServerCliente::control_local_server(string elem)
     outFile.close();
 }
 
-void ControlServerCliente::escribir_json(string ruta, Json::Value root)
+void Control::escribir_json(string ruta, Json::Value root)
 {
 
     Json::StyledStreamWriter writer;
@@ -96,7 +126,7 @@ void ControlServerCliente::escribir_json(string ruta, Json::Value root)
     outFile.close();
 }
 
-std::string ControlServerCliente::leer_json(string ruta, string llave)
+std::string Control::leer_json(string ruta, string llave)
 {
 
     ifstream ifs(Command::thisPath + ruta);
@@ -107,7 +137,7 @@ std::string ControlServerCliente::leer_json(string ruta, string llave)
     return root[llave].asString();
 }
 
-std::string ControlServerCliente::leer_json2(string ruta, string key)
+std::string Control::leer_json2(string ruta, string key)
 {
 
     ifstream ifs(Command::thisPath + ruta);
