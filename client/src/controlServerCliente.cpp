@@ -13,9 +13,19 @@ bool Control::isIgnored(string ruta)
         while (!gotignore.eof())
         {
             getline(gotignore, line);
-            if (strcmp(ruta.c_str(), line.c_str()) == 0)
+            if (line.back() == '/')
             {
-                return true;
+                if (ruta.find(line) != std::string::npos)
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                if (strcmp(ruta.c_str(), line.c_str()) == 0)
+                {
+                    return true;
+                }
             }
         }
         gotignore.close();
@@ -84,6 +94,8 @@ void Control::list_dir(const char *dir_name)
     {
         exit(EXIT_FAILURE);
     }
+
+    Command::updateIgnore();
 }
 
 void Control::control_local_server(string elem)

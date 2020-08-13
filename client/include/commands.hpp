@@ -9,6 +9,7 @@ public:
     static string thisPath;
     static void diff(string fileAfter, string fileBefore, string result);
     static void applyChanges(string original, string changes);
+    static void updateIgnore();
     static string get_selfpath();
     static void init(string repoName);
     static void add(string archivos);

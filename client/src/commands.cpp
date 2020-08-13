@@ -50,6 +50,27 @@ string Command::get_selfpath()
     return std::string(result, (count > 0) ? count : 0);
 }
 
+void Command::updateIgnore()
+{
+    ifstream ifs(Command::thisPath + ".got/control_cliente.json");
+    Json::Reader reader;
+    Json::Value root;
+    reader.parse(ifs, root);
+    string aux = "archivos";
+    for (Json::Value::const_iterator it = root[aux].begin(); it != root[aux].end(); ++it)
+    {
+        string file = it.name();
+        if (Control::isIgnored(file))
+        {
+            root["archivos"][it.key().asString()] = "ignorado";
+        }
+    }
+
+    Control::escribir_json(".got/control_cliente.json", root);
+
+    ifs.close();
+}
+
 void Command::init(string repoName)
 {
     if (mkdir(".got", 0777) == -1)
@@ -107,7 +128,7 @@ void Command::init(string repoName)
 
 void Command::add(string solicitud_archivos)
 {
-    // Antes de agregar agregar los archivos, actualizar directorio
+    // Antes de agregar los archivos, actualizar directorio
     const char *dir_name = thisPath.c_str();
     Control::list_dir(dir_name);
 
@@ -168,6 +189,7 @@ void Command::add(string solicitud_archivos)
     {
         Control::escribir_json(".got/control_cliente.json", root);
     }
+    ifs.close();
 }
 
 void Command::commit(string comentario)
@@ -327,4 +349,5 @@ void Command::commit(string comentario)
             Control::escribir_json(".got/control_cliente.json", root1);
         }
     }
+    ifs1.close();
 }
