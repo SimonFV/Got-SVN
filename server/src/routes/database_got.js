@@ -4,7 +4,7 @@ const router = express.Router();
 const mysqlConnection  = require('../database.js');
 var md5 = require('md5');
 
-// Volver un archivo a un commit posterior
+// Solicitar huffman
 router.get('/codigo_huffman', (req, res) => {
   var { id_commit, nombre_archivo} = req.body;
   mysqlConnection.query("SELECT CONVERT(archivo.codigo_huffman USING utf8), archivo.simbolo_codigo " +
@@ -81,13 +81,17 @@ router.get('/agregados_commit_anterior', (req, res) => {
 
 // Mostrar modificaciones respecto a un commit 
 router.get('/modificaciones_commit', (req, res) => {
-  const { hash_commit, nombre_archivo} = req.body;
+  const { id_commit, nombre_archivo} = req.body;
   mysqlConnection.query("SELECT diff.nombre_archivo " +
               "FROM diff JOIN commit ON diff.relacion_commit = commit.id_commit " +
-              "WHERE commit.hash_commit ='" + hash_commit + "' AND diff.nombre_archivo = '" + 
-               nombre_archivo + "' " , {hash_commit, nombre_archivo}, (err, rows, fields) => {
+              "WHERE commit.id_commit ='" + id_commit + "' AND diff.nombre_archivo = '" + 
+               nombre_archivo + "' " , {id_commit, nombre_archivo}, (err, rows, fields) => {
     if(!err) {
-      res.status(200).json(rows);
+      if(rows.length > 0){
+        res.status(200).json({"existencia": "si"});
+      }else{
+        res.status(200).json({"existencia": "no"});
+      }
     } else {
       res.status(500).send('Operacion fallida al solicitar modificaciones commit!');
     }
@@ -96,13 +100,17 @@ router.get('/modificaciones_commit', (req, res) => {
 
 // Mostrar agregados respecto a un commit
 router.get('/agregados_commit', (req, res) => {
-  const { hash_commit, nombre_archivo} = req.body;
+  const { id_commit, nombre_archivo} = req.body;
   mysqlConnection.query("SELECT archivo.nombre_archivo " +
               "FROM archivo JOIN commit ON archivo.relacion_commit = commit.id_commit " +
-              "WHERE commit.hash_commit ='" + hash_commit + "' AND archivo.nombre_archivo = '" + 
-               nombre_archivo + "' " , {hash_commit, nombre_archivo}, (err, rows, fields) => {
+              "WHERE commit.id_commit ='" + id_commit + "' AND archivo.nombre_archivo = '" + 
+               nombre_archivo + "' " , {id_commit, nombre_archivo}, (err, rows, fields) => {
     if(!err) {
-      res.status(200).json(rows);
+      if(rows.length > 0){
+        res.status(200).json({"existencia": "si"});
+      }else{
+        res.status(200).json({"existencia": "no"});
+      }
     } else {
       res.status(500).send('Operacion fallida al solicitar agregados commit!');
     }

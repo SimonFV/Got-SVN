@@ -14,6 +14,7 @@ public:
     static void add(string archivos);
     static void commit(string mensaje);
     static string diff_a_string();
+    static void status(string archivo);
 };
 
 #endif

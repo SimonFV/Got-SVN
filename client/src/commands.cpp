@@ -328,3 +328,79 @@ void Command::commit(string comentario)
         }
     }
 }
+
+void Command::status(string archivo)
+{
+    vector<pair<string, string>> vect_historial_archivos;
+
+    if (archivo == "")
+    {
+        // Leer control_cliente.json
+        ifstream ifs(Command::thisPath + ".got/control_cliente.json");
+        Json::Reader reader;
+        Json::Value root;
+        reader.parse(ifs, root);
+        string aux = "archivos";
+        for (Json::Value::const_iterator it = root[aux].begin(); it != root[aux].end(); ++it)
+        {
+            if (root["archivos"][it.key().asString()] == "no_controlado" || root["archivos"][it.key().asString()] == "agregado")
+            {
+                spdlog::info("El archivo" + it.key().asString() + "ha sido agregado");
+            }
+            else if (root["archivos"][it.key().asString()] == "modificado")
+            {
+                spdlog::info("El archivo" + it.key().asString() + "ha sido modificado");
+            }
+        }
+    }
+    else
+    {
+        // Guardar el # commit actual
+        int commit_anterior = stoi(Control::leer_json(".got/control_cliente.json", "commit"));
+        string archivo_retornado;
+        while (commit_anterior != 0)
+        {
+            // Pedir archivo agregado del commit anterior
+            Json::Value root3;
+            root3["id_commit"] = commit_anterior;
+            root3["nombre_archivo"] = archivo;
+            Control::escribir_json(".got/enviado.json", root3);
+            Client::getI()->GET("agregados_commit", thisPath + ".got/enviado.json");
+            spdlog::info("Obteniendo archivo agregado del commit anterior!");
+            spdlog::info(Client::getI()->getStatus());
+
+            // Guardar si/no esta generado
+            archivo_retornado = Control::leer_json(".got/recibido.json", "existencia");
+            if (archivo_retornado == "si")
+            {
+                vect_historial_archivos.push_back(make_pair(to_string(commit_anterior), "agregado"));
+            }
+            else
+            {
+                // Pedir archivo modificado del commit anterior
+                Json::Value root4;
+                root4["id_commit"] = commit_anterior;
+                root4["nombre_archivo"] = archivo;
+                Control::escribir_json(".got/enviado.json", root4);
+                Client::getI()->GET("modificaciones_commit", thisPath + ".got/enviado.json");
+                spdlog::info("Obteniendo archivo modificado del commit anterior!");
+                spdlog::info(Client::getI()->getStatus());
+
+                // Guardar si/no esta generado
+                archivo_retornado = Control::leer_json(".got/recibido.json", "existencia");
+                if (archivo_retornado == "si")
+                {
+                    vect_historial_archivos.push_back(make_pair(to_string(commit_anterior), "modificado"));
+                }
+            }
+
+            commit_anterior -= 1;
+        }
+    }
+
+    // Mostrar los archivos agregados/modificados
+    for (int i = 0; i < vect_historial_archivos.size(); i++)
+    {
+        spdlog::info("En el commit # " + vect_historial_archivos[i].first + " del archivo " + archivo + " fue " + vect_historial_archivos[i].second);
+    }
+}
