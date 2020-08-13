@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
         }
     }
     else if (!strcmp(argv[1], "status"))
-    {   
+    {
         if (argc < 3)
         {
             Command::status("");
@@ -108,6 +108,7 @@ int main(int argc, char *argv[])
         }
         else
         {
+            Command::rollback(argv[2], argv[3]);
             spdlog::info("Regresando el archivo {} al commit {}", argv[3], argv[2]);
             //DEVOLVER EL ARCHIVO AL COMMIT ESPECIFICO
         }
@@ -142,6 +143,10 @@ int main(int argc, char *argv[])
             spdlog::info("Sincronizando el archivo {}", argv[2]);
             //SINCRONIZA EL ARCHIVO Y PERMITE EL MERGE
         }
+    }
+    else if (!strcmp(argv[1], "log"))
+    {
+        Command::log();
     }
     else if (!strcmp(argv[1], "help"))
     {

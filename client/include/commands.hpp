@@ -16,6 +16,8 @@ public:
     static void commit(string mensaje);
     static string diff_a_string();
     static void status(string archivo);
+    static void log();
+    static void rollback(string archivo, string commit);
 };
 
 #endif
