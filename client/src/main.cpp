@@ -70,9 +70,10 @@ int main(int argc, char *argv[])
         }
     }
     else if (!strcmp(argv[1], "status"))
-    {
+    {   
         if (argc < 3)
         {
+            Command::status("");
             spdlog::info("Mostrando historial completo...");
             //MOSTRAR HISTORIAL PARA TODOS LOS ARCHIVOS
         }
@@ -83,6 +84,7 @@ int main(int argc, char *argv[])
         }
         else
         {
+            Command::status(argv[2]);
             spdlog::info("Mostrando historial para {}", argv[2]);
             //MOSTRAR HISTORIAL PARA 1 ARCHIVO
         }
