@@ -13,7 +13,7 @@ string Command::diff_a_string()
     string linea_texto = "";
     string texto_final = "";
 
-    ficheroEntrada.open(Command::thisPath + "../repo/test.patch", ios::in);
+    ficheroEntrada.open(Command::thisPath + "../repo/.got/test.patch", ios::in);
     if (ficheroEntrada.is_open())
     {
         while (!ficheroEntrada.eof())
@@ -291,14 +291,14 @@ void Command::commit(string comentario)
                 temporal_texto_ascii = Control::desencriptar_ascii_a_texto(dato_retornado2);
 
                 // Crear archivo con huffman
-                ofstream fs(Command::thisPath + "../repo/archivos_temporales/" + it.key().asString());
+                ofstream fs(Command::thisPath + "../repo/.got/test.txt");
                 fs << descomprimir_data(dato_retornado, temporal_texto_ascii);
                 fs.close();
 
                 // Saca diferencias del Antes con el Despues. Poner RUTA DESPUES, LUEGO RUTA ANTES
                 Command::diff(Command::thisPath + it.key().asString(),
-                              Command::thisPath + "../repo/archivos_temporales/" + it.key().asString(),
-                              Command::thisPath + "../repo/test.patch");
+                              Command::thisPath + "../repo/.got/test.txt",
+                              Command::thisPath + "../repo/.got/test.patch");
 
                 comparacion_diff = Command::diff_a_string();
             }
@@ -322,18 +322,18 @@ void Command::commit(string comentario)
 
                 // Para revisar si hay cambios
                 // Copiar codigo_diff_anterio en test.patch
-                ofstream fs(Command::thisPath + "../repo/test.patch");
+                ofstream fs(Command::thisPath + "../repo/.got/test.patch");
                 fs << temporal_texto_ascii;
                 fs.close();
 
                 // Regresar el archivo al commmit pasado
-                Command::applyChanges(Command::thisPath + "../repo/archivos_temporales/" + it.key().asString(),
-                                      Command::thisPath + "../repo/test.patch");
+                Command::applyChanges(Command::thisPath + "../repo/.got/test.txt",
+                                      Command::thisPath + "../repo/.got/test.patch");
 
                 // Compararlo con el actual
                 Command::diff(Command::thisPath + it.key().asString(),
-                              Command::thisPath + "../repo/archivos_temporales/" + it.key().asString(),
-                              Command::thisPath + "../repo/test.patch");
+                              Command::thisPath + "../repo/.got/test.txt",
+                              Command::thisPath + "../repo/.got/test.patch");
 
                 comparacion_diff = Command::diff_a_string();
             }
@@ -510,8 +510,8 @@ void Command::rollback(string archivo, string commit)
     // Desencriptar ASCII a TEXTO
     temporal_texto_ascii = Control::desencriptar_ascii_a_texto(dato_retornado2);
 
-    // Crear archivo con huffman
-    ofstream fs(Command::thisPath + "../repo/archivos_temporales/" + archivo);
+    // Crear archivo con huffman (en la ruta actual)
+    ofstream fs(Command::thisPath + archivo);
     fs << descomprimir_data(dato_retornado, temporal_texto_ascii);
     fs.close();
 
@@ -540,13 +540,13 @@ void Command::rollback(string archivo, string commit)
 
             // Para revisar si hay cambios
             // Copiar codigo_diff_anterio en test.patch
-            ofstream fs(Command::thisPath + "../repo/test.patch");
+            ofstream fs(Command::thisPath + "../repo/.got/test.patch");
             fs << temporal_texto_ascii;
             fs.close();
 
-            // Regresar el archivo al commmit pasado
-            Command::applyChanges(Command::thisPath + "../repo/archivos_temporales/" + archivo,
-                                  Command::thisPath + "../repo/test.patch");
+            // Regresar el archivo al commmit pasado (en la ruta actual)
+            Command::applyChanges(Command::thisPath + archivo,
+                                  Command::thisPath + "../repo/.got/test.patch");
 
             commit_actual += 1;
         }
@@ -575,8 +575,8 @@ void Command::sync(string archivo)
     // Se verifica si hay cambios del commit actual con el trabajo actual
     // Compararlo con el actual
     Command::diff(Command::thisPath + archivo,
-                  Command::thisPath + "../repo/archivos_temporales/" + archivo,
-                  Command::thisPath + "../repo/test.patch");
+                  Command::thisPath + "../repo/.got/test.txt",
+                  Command::thisPath + "../repo/.got/test.patch");
 
     string comparacion_diff = Command::diff_a_string();
 
@@ -590,7 +590,7 @@ void Command::sync(string archivo)
     {
         // Sincroniza los dos archivos
         Command::diff_sync(Command::thisPath + archivo,
-                           Command::thisPath + "../repo/archivos_temporales/" + archivo,
-                           Command::thisPath + "../repo/test.patch");
+                           Command::thisPath + "../repo/.got/test.txt",
+                           Command::thisPath + "../repo/.got/test.patch");
     }
 }
