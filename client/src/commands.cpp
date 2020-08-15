@@ -457,18 +457,18 @@ void Command::log()
     {
 
         // Pedir hash's
-        Client::getI()->GET("/hash_comentario/" + commit_anterior, thisPath + ".got/enviado.json");
+        Client::getI()->GET("hash_comentario/" + to_string(commit_anterior), thisPath + ".got/enviado.json");
         spdlog::info("Obteniendo hash y comentario!");
         spdlog::info(Client::getI()->getStatus());
 
         // Guardar resultados
-        hash_retornado = Control::leer_json(".got/recibido.json", "hash_commit");
-        comentario_retornado = Control::leer_json(".got/recibido.json", "comentario");
+        hash_retornado = Control::leer_json2(".got/recibido.json", "hash_commit");
+        comentario_retornado = Control::leer_json2(".got/recibido.json", "comentario");
 
         // Mostrar hash
-        spdlog::info("Version: " + commit_anterior);
-        spdlog::info("Hash: " + hash_retornado);
-        spdlog::info("Comentario: " + comentario_retornado);
+        spdlog::info("Version: {}", commit_anterior);
+        spdlog::info("Hash: {}", hash_retornado);
+        spdlog::info("Comentario: {}", comentario_retornado);
 
         commit_anterior -= 1;
     }
