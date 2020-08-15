@@ -480,8 +480,20 @@ void Command::log()
     }
 }
 
-void Command::rollback(string archivo, string commit)
+void Command::rollback(string archivo, string commit, bool ruta_externa)
 {
+
+    // Escribe el contenido en ruta actual o temporal
+    string ruta = "";
+    if (ruta_externa)
+    {
+        ruta = Command::thisPath + "../repo/.got/test.txt";
+    }
+    else
+    {
+        ruta = Command::thisPath + archivo;
+    }
+
     string temporal_ascii_texto = "";
     string temporal_texto_ascii = "";
 
@@ -513,8 +525,8 @@ void Command::rollback(string archivo, string commit)
     // Desencriptar ASCII a TEXTO
     temporal_texto_ascii = Control::desencriptar_ascii_a_texto(dato_retornado2);
 
-    // Crear archivo con huffman (en la ruta actual)
-    ofstream fs(Command::thisPath + archivo);
+    // Crear archivo con huffman (en la ruta actual/temporal)
+    ofstream fs(ruta);
     fs << descomprimir_data(dato_retornado, temporal_texto_ascii);
     fs.close();
 
@@ -547,8 +559,8 @@ void Command::rollback(string archivo, string commit)
             fs << temporal_texto_ascii;
             fs.close();
 
-            // Regresar el archivo al commmit pasado (en la ruta actual)
-            Command::applyChanges(Command::thisPath + archivo,
+            // Regresar el archivo al commmit pasado (en la ruta actual/temporal)
+            Command::applyChanges(ruta,
                                   Command::thisPath + "../repo/.got/test.patch");
 
             commit_actual += 1;
@@ -563,17 +575,28 @@ void Command::reset(string archivo)
     string commit_retornado = Control::leer_json(".got/control_cliente.json", "commit");
 
     // Reset funciona similar a rollback
-    Command::rollback(archivo, commit_retornado);
+    Command::rollback(archivo, commit_retornado, false);
 }
 
 void Command::sync(string archivo)
 {
+    // Guardar el # repositorio actual
+    string repositorio_retornado = Control::leer_json(".got/control_cliente.json", "id_repositorio");
+
+    // Pedir commit actual (solicitado del server)
+    // Escribe la estructura ultimo_commit y envia datos
+    Json::Value root;
+    root["relacion_repositorio"] = repositorio_retornado;
+    Control::escribir_json(".got/enviado.json", root);
+    Client::getI()->GET("ultimo_commit", thisPath + ".got/enviado.json");
+    spdlog::info("Obteniendo ultimo commit!");
+    spdlog::info(Client::getI()->getStatus());
 
     // Guardar el # commit actual
-    string commit_retornado = Control::leer_json(".got/control_cliente.json", "commit");
+    string commit_retornado = Control::leer_json2(".got/recibido.json", "id_commit");
 
     // Se aplica rollback para llegar hasta el commit actual
-    Command::rollback(archivo, commit_retornado);
+    Command::rollback(archivo, commit_retornado, true);
 
     // Se verifica si hay cambios del commit actual con el trabajo actual
     // Compararlo con el actual
@@ -595,5 +618,11 @@ void Command::sync(string archivo)
         Command::diff_sync(Command::thisPath + archivo,
                            Command::thisPath + "../repo/.got/test.txt",
                            Command::thisPath + "../repo/.got/test.patch");
+
+        // Copiar de test.patch a archivo
+        string patch_a_archivo = Command::diff_a_string();
+        ofstream fs(Command::thisPath + archivo);
+        fs << patch_a_archivo;
+        fs.close();
     }
 }
