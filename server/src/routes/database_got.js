@@ -9,7 +9,7 @@ router.get('/hash_comentario/:id_commit', (req, res) => {
   const { id_commit } = req.params; 
   mysqlConnection.query('SELECT hash_commit, comentario FROM commit WHERE id_commit = ?', [id_commit], (err, rows, fields) => {
     if(!err) {
-      res.status(200).json(rows);
+      res.status(200).json({rows});
     } else {
       res.status(500).send('Operacion fallida al solicitar hash_comentario!');
     }
