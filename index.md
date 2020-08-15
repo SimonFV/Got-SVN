@@ -1,3 +1,12 @@
+## Instituto Tecnológico de Costa Rica
+## Área de Ingeniería en Computadores
+## Algoritmos y Estructuras de Datos II
+## Primer Semestre 2020
+## Proyecto 3 - Manejador de Versiones GOT
+### Estudiantes:
+### Simón Fallas Villalobos (2019324313)
+### David Quesada Calderón (2016246935)
+
 ## Descripción:
 
 Got es un manejador de versiones que registra los cambios efectuados en archivos de computadoras permitiendo la colaboración entre personas. 
