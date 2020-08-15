@@ -90,6 +90,9 @@ void Command::init(string repoName)
 
     ofstream file;
     file.open(thisPath + ".gotignore");
+    string mensaje = "PARA IGNORAR CARPETAS: <carpeta>/\nPARA IGNORAR ARCHIVOS: <archivo>.<extension>\n";
+    mensaje += "PARA IGNORAR ARCHIVOS DENTRO DE CARPETAS: <carpeta>/<archivo>.<extension>\n";
+    file << mensaje;
     file.close();
     spdlog::info("Agregado el archivo .gotignore");
 
@@ -389,11 +392,11 @@ void Command::status(string archivo)
         {
             if (root["archivos"][it.key().asString()] == "no_controlado" || root["archivos"][it.key().asString()] == "agregado")
             {
-                spdlog::info("El archivo " + it.key().asString() + " ha sido agregado");
+                spdlog::info("El archivo " + it.key().asString() + " ha sido agregado respecto al commit anterior");
             }
             else if (root["archivos"][it.key().asString()] == "modificado")
             {
-                spdlog::info("El archivo " + it.key().asString() + " ha sido modificado");
+                spdlog::info("El archivo " + it.key().asString() + " ha sido modificado respecto al commit anterior");
             }
         }
     }
