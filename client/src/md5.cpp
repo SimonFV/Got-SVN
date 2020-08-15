@@ -110,7 +110,6 @@ inline void MD5::II(uint4 &a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4
 // default ctor, just initailize
 MD5::MD5()
 {
-  digest[16] = {};
   init();
 }
 
@@ -119,7 +118,6 @@ MD5::MD5()
 // nifty shortcut ctor, compute MD5 for string and finalize it right away
 MD5::MD5(const std::string &text)
 {
-  digest[16] = {};
   init();
   update(text.c_str(), text.length());
   finalize();
