@@ -88,7 +88,7 @@ public:
      * @param archivo Archivo en el cliente.
      * @param commit Archivo en el cliente.
      */
-    static void rollback(string archivo, string commit);
+    static void rollback(string archivo, string commit, bool ruta_externa);
 
     /**
      * Método que devuelve un archivo al último commit.

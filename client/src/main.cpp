@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            Command::rollback(argv[2], argv[3]);
+            Command::rollback(argv[2], argv[3], false);
             spdlog::info("Regresando el archivo {} al commit {}", argv[3], argv[2]);
             //DEVOLVER EL ARCHIVO AL COMMIT ESPECIFICO
         }
