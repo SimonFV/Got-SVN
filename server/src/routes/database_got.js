@@ -4,6 +4,21 @@ const router = express.Router();
 const mysqlConnection  = require('../database.js');
 var md5 = require('md5');
 
+// Solicitar commit de un archivo
+router.get('/solicitar_commit', (req, res) => {
+  const {nombre_archivo} = req.body;
+  mysqlConnection.query("SELECT archivo.relacion_commit " +
+              "FROM archivo " +
+              "WHERE archivo.nombre_archivo ='"  + 
+               nombre_archivo + "' " , {nombre_archivo}, (err, rows, fields) => {
+    if(rows.length > 0){
+      res.status(200).json({rows});
+    }else{
+      res.status(200).json({"relacion_commit": -1});
+    }
+  });  
+});
+
 // Solicitar hash y comentarios
 router.get('/hash_comentario/:id_commit', (req, res) => {
   const { id_commit } = req.params; 
@@ -34,7 +49,7 @@ router.get('/codigo_huffman', (req, res) => {
 // Volver un archivo a un commit posterior
 router.get('/commit_posterior', (req, res) => {
   const { id_commit, nombre_archivo} = req.body;
-  mysqlConnection.query("SELECT diff.codigo_diff_posterior " +
+  mysqlConnection.query("SELECT CONVERT(diff.codigo_diff_posterior USING utf8) " +
               "FROM diff JOIN commit ON diff.relacion_commit = commit.id_commit " +
               "WHERE commit.id_commit ='" + id_commit + "' AND diff.nombre_archivo = '" + 
                nombre_archivo + "' " , {id_commit, nombre_archivo}, (err, rows, fields) => {
@@ -49,7 +64,7 @@ router.get('/commit_posterior', (req, res) => {
 // Devolver un archivo a un commit anterior
 router.get('/commit_anterior', (req, res) => {
   const { id_commit, nombre_archivo} = req.body;
-  mysqlConnection.query("SELECT diff.codigo_diff_anterior " +
+  mysqlConnection.query("SELECT CONVERT(diff.codigo_diff_anterior USING utf8) " +
               "FROM diff JOIN commit ON diff.relacion_commit = commit.id_commit " +
               "WHERE commit.id_commit ='" + id_commit + "' AND diff.nombre_archivo = '" + 
                nombre_archivo + "' " , {id_commit, nombre_archivo}, (err, rows, fields) => {

@@ -285,23 +285,20 @@ void Command::commit(string comentario)
                 temporal_texto_ascii = Control::desencriptar_ascii_a_texto(dato_retornado2);
 
                 // Crear archivo con huffman
-                ofstream fs(Command::thisPath + "../repo/" + it.key().asString());
+                ofstream fs(Command::thisPath + "../repo/archivos_temporales/" + it.key().asString());
                 fs << descomprimir_data(dato_retornado, temporal_texto_ascii);
                 fs.close();
 
-                int a;
-                cin >> a;
-
                 // Saca diferencias del Antes con el Despues. Poner RUTA DESPUES, LUEGO RUTA ANTES
                 Command::diff(Command::thisPath + it.key().asString(),
-                              Command::thisPath + "../repo/" + it.key().asString(),
+                              Command::thisPath + "../repo/archivos_temporales/" + it.key().asString(),
                               Command::thisPath + "../repo/test.patch");
 
                 comparacion_diff = Command::diff_a_string();
             }
             else
             {
-                spdlog::info("Agregando diff's del commit 2!");
+                spdlog::info("Agregando diff's del commit > 2!");
                 // Pedir diferencias (diff anterior)
                 // Escribe la estructura diff_anterior y envia datos
                 Json::Value root4;
@@ -312,7 +309,7 @@ void Command::commit(string comentario)
                 spdlog::info("Obteniendo codigo diff!");
                 spdlog::info(Client::getI()->getStatus());
                 // Obtener codigo_diff_anterior
-                dato_retornado = Control::leer_json2(".got/recibido.json", "codigo_diff_anterior");
+                dato_retornado = Control::leer_json2(".got/recibido.json", "CONVERT(diff.codigo_diff_anterior USING utf8)");
 
                 // Desencriptar ASCII a TEXTO
                 temporal_texto_ascii = Control::desencriptar_ascii_a_texto(dato_retornado);
@@ -324,12 +321,12 @@ void Command::commit(string comentario)
                 fs.close();
 
                 // Regresar el archivo al commmit pasado
-                Command::applyChanges(Command::thisPath + "../repo/" + it.key().asString(),
+                Command::applyChanges(Command::thisPath + "../repo/archivos_temporales/" + it.key().asString(),
                                       Command::thisPath + "../repo/test.patch");
 
                 // Compararlo con el actual
                 Command::diff(Command::thisPath + it.key().asString(),
-                              Command::thisPath + "../repo/" + it.key().asString(),
+                              Command::thisPath + "../repo/archivos_temporales/" + it.key().asString(),
                               Command::thisPath + "../repo/test.patch");
 
                 comparacion_diff = Command::diff_a_string();
@@ -476,11 +473,25 @@ void Command::log()
 
 void Command::rollback(string archivo, string commit)
 {
+    string temporal_ascii_texto = "";
+    string temporal_texto_ascii = "";
+
+    // Consulta cual fue el commit inicial del archivo
+    // Se supone que solo existe un archivo con ese nombre!
+    Json::Value root0;
+    root0["nombre_archivo"] = archivo;
+    Control::escribir_json(".got/enviado.json", root0);
+    Client::getI()->GET("solicitar_commit", thisPath + ".got/enviado.json");
+    spdlog::info("Obteniendo commit inicial del archivo!");
+    spdlog::info(Client::getI()->getStatus());
+
+    // Guardar relacion_commit del archivo
+    string relacion_commit_retornado = Control::leer_json2(".got/recibido.json", "relacion_commit");
 
     // Crea el primer archivo
-    // Pedir Huffman del commit 1
+    // Pedir Huffman del commit inicial del archivo
     Json::Value root;
-    root["id_commit"] = 1; // Directamente al commit 1
+    root["id_commit"] = relacion_commit_retornado;
     root["nombre_archivo"] = archivo;
     Control::escribir_json(".got/enviado.json", root);
     Client::getI()->GET("codigo_huffman", thisPath + ".got/enviado.json");
@@ -489,38 +500,50 @@ void Command::rollback(string archivo, string commit)
     // Guardar hufmman
     string dato_retornado = Control::leer_json2(".got/recibido.json", "CONVERT(archivo.codigo_huffman USING utf8)");
     string dato_retornado2 = Control::leer_json2(".got/recibido.json", "CONVERT(archivo.simbolo_codigo USING utf8)");
+
+    // Desencriptar ASCII a TEXTO
+    temporal_texto_ascii = Control::desencriptar_ascii_a_texto(dato_retornado2);
+
     // Crear archivo con huffman
-    ofstream fs(Command::thisPath + "../repo/" + archivo);
-    fs << descomprimir_data(dato_retornado, dato_retornado2);
+    ofstream fs(Command::thisPath + "../repo/archivos_temporales/" + archivo);
+    fs << descomprimir_data(dato_retornado, temporal_texto_ascii);
     fs.close();
-
-    // Aplicar diff hasta el commit pedido
-    int commit_pedido = stoi(commit);
-    int commit_actual = 1;
-    string diff_retornado;
-    while (commit_actual < commit_pedido)
+    
+    if (stoi(commit) > 1)
     {
-        // Pedir diferencias (diff)
-        // Escribe la estructura diff_anterior y envia datos
-        Json::Value root2;
-        root2["id_commit"] = commit_actual;
-        root2["nombre_archivo"] = archivo;
-        Control::escribir_json(".got/enviado.json", root2);
-        Client::getI()->GET("commit_anterior", thisPath + ".got/enviado.json");
-        spdlog::info("Obteniendo codigo diff!");
-        spdlog::info(Client::getI()->getStatus());
-        // Obtener codigo_diff_anterior
-        diff_retornado = Control::leer_json2(".got/recibido.json", "codigo_diff_anterior");
+        // Aplicar diff hasta el commit pedido
+        int commit_pedido = stoi(commit);
+        int commit_actual = 2;
+        string diff_retornado;
+        while (commit_actual <= commit_pedido)
+        {
+            // Pedir diferencias (diff)
+            // Escribe la estructura diff_anterior y envia datos
+            Json::Value root2;
+            root2["id_commit"] = commit_actual;
+            root2["nombre_archivo"] = archivo;
+            Control::escribir_json(".got/enviado.json", root2);
+            Client::getI()->GET("commit_anterior", thisPath + ".got/enviado.json");
+            spdlog::info("Obteniendo codigo diff!");
+            spdlog::info(Client::getI()->getStatus());
+            // Obtener codigo_diff_anterior
+            diff_retornado = Control::leer_json2(".got/recibido.json", "CONVERT(diff.codigo_diff_anterior USING utf8)");
 
-        // Para revisar si hay cambios
-        // Copiar codigo_diff_anterio en test.patch
-        ofstream fs(Command::thisPath + "../repo/test.patch");
-        fs << diff_retornado;
-        fs.close();
+            // Desencriptar ASCII a TEXTO
+            temporal_texto_ascii = Control::desencriptar_ascii_a_texto(diff_retornado);
 
-        // Regresar el archivo al commmit pasado
-        Command::applyChanges(Command::thisPath + "../repo/" + archivo,
-                              Command::thisPath + "../repo/test.patch");
+            // Para revisar si hay cambios
+            // Copiar codigo_diff_anterio en test.patch
+            ofstream fs(Command::thisPath + "../repo/test.patch");
+            fs << temporal_texto_ascii;
+            fs.close();
+
+            // Regresar el archivo al commmit pasado
+            Command::applyChanges(Command::thisPath + "../repo/archivos_temporales/" + archivo,
+                                  Command::thisPath + "../repo/test.patch");
+
+            commit_actual += 1;
+        }
     }
 }
 
