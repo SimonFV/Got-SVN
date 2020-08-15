@@ -33,11 +33,11 @@ La forma en que trabaja el algoritmo para comprimir se resume en tres pasos:
 ### MD5:
 MD5 es un algoritmo de reducción criptográfico de 128 bits. Se suele utilizar para comprobar la integridad de los archivos cuando se envían o copian. Para este proyecto se utilizó MD5 para comprobar la integridad de los commits, utilizado como un *checksum*. El algoritmo funciona generando un código similar al siguiente: 5df9f63916ebf8528697b629022993e8. Este mismo código se genera siempre que se ejecute el mismo algoritmo sobre el mismo grupo de datos, por lo que se puede comprobar fácilmente si se corrompió la información, ya que se generaría un código totalmente diferente.
 
-# ASCII:
+### ASCII:
 Código ASCII es una representación numérica de siete bits de un carácter. Durante este proyeto se utilizó esta codificación para enviar de forma segura los códigos utilizados por el algoritmo Huffman, ya que se notó que se generaban algunas pérdidas con algunos caracteres especiales al ser enviados desde el cliente al servidor y viceversa.
 
-# Árbol Binario:
+### Árbol Binario:
 Se inmplemento un árbol binario de búsqueda para utilizarlo con el algoritmo Huffman. Es árbol tiene una estructura como la mostrada anteriormente. Cada nodo es una instancia en el código, y estos se enlazan entre sí mediante punteros. Cada nodo tiene entonces, tres punteros, dos para sus dos nodos hijos, y uno para el nodo padre.
 
-# Singleton:
+### Singleton:
 Para controlar la instanciación de la clase Cliente y también para facilitar el acceso a sus atributos y métodos, esta se implementó con el patró de diseño Singleton. Este patrón permite restringir una clase para que solo se pueda generar una instancia de esta. Además, facilita el acceso a dicha instancia desde cualquier sitio dentro del código.
