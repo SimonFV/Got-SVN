@@ -18,6 +18,8 @@ public:
     static void status(string archivo);
     static void log();
     static void rollback(string archivo, string commit);
+    static void reset(string archivo);
+
 };
 
 #endif

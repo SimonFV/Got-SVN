@@ -172,3 +172,38 @@ std::string Control::leer_json2(string ruta, string key)
 
     return valor;
 }
+
+std::string Control::encriptar_texto_a_ascii(string texto)
+{
+    char letra;
+    string texto_final_ascii = "";
+
+    while (texto.size() > 0)
+    {
+        letra = texto[0];
+        texto_final_ascii += to_string(int(letra)) + "/";
+        texto.erase(0, 1);
+    }
+
+    return texto_final_ascii;
+}
+
+std::string Control::desencriptar_ascii_a_texto(string texto_final_ascii)
+{
+
+    string valor_ascii = "";
+    string cadena_descriptada = "";
+    while (texto_final_ascii.size() > 0)
+    {
+        while (texto_final_ascii[0] != '/')
+        {
+            valor_ascii += texto_final_ascii[0];
+            texto_final_ascii.erase(0, 1);
+        }
+        texto_final_ascii.erase(0, 1);
+        cadena_descriptada += char(stoi(valor_ascii));
+        valor_ascii = "";
+    }
+
+    return cadena_descriptada;
+}

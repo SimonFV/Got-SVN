@@ -228,9 +228,11 @@ void Command::commit(string comentario)
 
     // Enviar archivos
     string aux = "archivos";
-    string texto_final;
-    string cod_binario;
-    string sim_cod;
+    string texto_final = "";
+    string cod_binario = "";
+    string sim_cod = "";
+    string temporal_ascii_texto = "";
+    string temporal_texto_ascii = "";
     for (Json::Value::const_iterator it = root1[aux].begin(); it != root1[aux].end(); ++it)
     {
 
@@ -242,11 +244,14 @@ void Command::commit(string comentario)
             cod_binario = pedir_codigoBinario();
             sim_cod = pedir_simboloCodigo();
 
+            // Encriptar a ASCII para que no haya problemas en json
+            temporal_ascii_texto = Control::encriptar_texto_a_ascii(sim_cod);
+
             // Escribe la estructura  archivo y envia datos
             Json::Value root2;
             root2["nombre_archivo"] = it.key().asString();
             root2["codigo_huffman"] = cod_binario;
-            root2["simbolo_codigo"] = sim_cod;
+            root2["simbolo_codigo"] = temporal_ascii_texto;
             root2["relacion_commit"] = relacion_actual_commit;
             Control::escribir_json(".got/enviado.json", root2);
 
@@ -260,7 +265,7 @@ void Command::commit(string comentario)
         }
         else if (root1["archivos"][it.key().asString()] == "modificado")
         {
-            string comparacion_diff;
+            string comparacion_diff = "";
             if (relacion_actual_commit == 2)
             {
                 spdlog::info("Agregando diff's del commit 2!");
@@ -274,11 +279,18 @@ void Command::commit(string comentario)
                 spdlog::info(Client::getI()->getStatus());
                 // Guardar hufmman
                 dato_retornado = Control::leer_json2(".got/recibido.json", "CONVERT(archivo.codigo_huffman USING utf8)");
-                dato_retornado2 = Control::leer_json2(".got/recibido.json", "simbolo_codigo");
+                dato_retornado2 = Control::leer_json2(".got/recibido.json", "CONVERT(archivo.simbolo_codigo USING utf8)");
+
+                // Desencriptar ASCII a TEXTO
+                temporal_texto_ascii = Control::desencriptar_ascii_a_texto(dato_retornado2);
+
                 // Crear archivo con huffman
                 ofstream fs(Command::thisPath + "../repo/" + it.key().asString());
-                fs << descomprimir_data(dato_retornado, dato_retornado2);
+                fs << descomprimir_data(dato_retornado, temporal_texto_ascii);
                 fs.close();
+
+                int a;
+                cin >> a;
 
                 // Saca diferencias del Antes con el Despues. Poner RUTA DESPUES, LUEGO RUTA ANTES
                 Command::diff(Command::thisPath + it.key().asString(),
@@ -302,10 +314,13 @@ void Command::commit(string comentario)
                 // Obtener codigo_diff_anterior
                 dato_retornado = Control::leer_json2(".got/recibido.json", "codigo_diff_anterior");
 
+                // Desencriptar ASCII a TEXTO
+                temporal_texto_ascii = Control::desencriptar_ascii_a_texto(dato_retornado);
+
                 // Para revisar si hay cambios
                 // Copiar codigo_diff_anterio en test.patch
                 ofstream fs(Command::thisPath + "../repo/test.patch");
-                fs << dato_retornado;
+                fs << temporal_texto_ascii;
                 fs.close();
 
                 // Regresar el archivo al commmit pasado
@@ -330,10 +345,13 @@ void Command::commit(string comentario)
                 // Sacar MD5
                 string codigo_checksum = md5(to_string(relacion_actual_commit));
 
+                // Encriptar a ASCII para que no haya problemas en json
+                temporal_ascii_texto = Control::encriptar_texto_a_ascii(comparacion_diff);
+
                 // Escribe la estructura diff y envia datos
                 Json::Value root5;
                 root5["nombre_archivo"] = it.key().asString();
-                root5["codigo_diff_anterior"] = comparacion_diff;
+                root5["codigo_diff_anterior"] = temporal_ascii_texto;
                 root5["codigo_diff_posterior"] = ""; // Va vacio, el proximo commit lo actualiza
                 root5["checksum"] = codigo_checksum;
                 root5["relacion_commit"] = relacion_actual_commit;
@@ -470,7 +488,7 @@ void Command::rollback(string archivo, string commit)
     spdlog::info(Client::getI()->getStatus());
     // Guardar hufmman
     string dato_retornado = Control::leer_json2(".got/recibido.json", "CONVERT(archivo.codigo_huffman USING utf8)");
-    string dato_retornado2 = Control::leer_json2(".got/recibido.json", "simbolo_codigo");
+    string dato_retornado2 = Control::leer_json2(".got/recibido.json", "CONVERT(archivo.simbolo_codigo USING utf8)");
     // Crear archivo con huffman
     ofstream fs(Command::thisPath + "../repo/" + archivo);
     fs << descomprimir_data(dato_retornado, dato_retornado2);
@@ -485,7 +503,7 @@ void Command::rollback(string archivo, string commit)
         // Pedir diferencias (diff)
         // Escribe la estructura diff_anterior y envia datos
         Json::Value root2;
-        root2["id_commit"] = commit_actual; 
+        root2["id_commit"] = commit_actual;
         root2["nombre_archivo"] = archivo;
         Control::escribir_json(".got/enviado.json", root2);
         Client::getI()->GET("commit_anterior", thisPath + ".got/enviado.json");
@@ -504,4 +522,9 @@ void Command::rollback(string archivo, string commit)
         Command::applyChanges(Command::thisPath + "../repo/" + archivo,
                               Command::thisPath + "../repo/test.patch");
     }
+}
+
+void Command::reset(string archivo)
+{
+    cout << archivo << endl;
 }

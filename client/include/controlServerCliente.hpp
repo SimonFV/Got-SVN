@@ -22,6 +22,8 @@ public:
     static std::string leer_json(string ruta, string dato);
     static std::string leer_json2(string ruta, string dato);
     static bool isIgnored(string ruta);
+    static std::string encriptar_texto_a_ascii(string texto);
+    static std::string desencriptar_ascii_a_texto(string texto_final_ascii);
 };
 
 #endif

@@ -19,7 +19,7 @@ router.get('/hash_comentario/:id_commit', (req, res) => {
 // Solicitar huffman
 router.get('/codigo_huffman', (req, res) => {
   var { id_commit, nombre_archivo} = req.body;
-  mysqlConnection.query("SELECT CONVERT(archivo.codigo_huffman USING utf8), archivo.simbolo_codigo " +
+  mysqlConnection.query("SELECT CONVERT(archivo.codigo_huffman USING utf8), CONVERT(archivo.simbolo_codigo USING utf8) " +
               "FROM archivo JOIN commit ON archivo.relacion_commit = commit.id_commit " +
               "WHERE commit.id_commit ='" + id_commit + "' AND archivo.nombre_archivo = '" + 
                nombre_archivo + "' " , {id_commit, nombre_archivo}, (err, rows, fields) => {
