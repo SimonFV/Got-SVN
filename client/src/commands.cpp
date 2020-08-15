@@ -31,6 +31,12 @@ string Command::diff_a_string()
     return texto_final;
 }
 
+void Command::diff_sync(string fileAfter, string fileBefore, string patch)
+{
+    string command = "diff -DVERSION1 " + fileBefore + " " + fileAfter + " > " + patch;
+    int sin_uso = system(command.c_str());
+}
+
 void Command::diff(string fileAfter, string fileBefore, string patch)
 {
     string command = "diff -e " + fileBefore + " " + fileAfter + " > " + patch;
@@ -383,11 +389,11 @@ void Command::status(string archivo)
         {
             if (root["archivos"][it.key().asString()] == "no_controlado" || root["archivos"][it.key().asString()] == "agregado")
             {
-                spdlog::info("El archivo" + it.key().asString() + "ha sido agregado");
+                spdlog::info("El archivo " + it.key().asString() + " ha sido agregado");
             }
             else if (root["archivos"][it.key().asString()] == "modificado")
             {
-                spdlog::info("El archivo" + it.key().asString() + "ha sido modificado");
+                spdlog::info("El archivo " + it.key().asString() + " ha sido modificado");
             }
         }
     }
@@ -396,7 +402,7 @@ void Command::status(string archivo)
         // Guardar el # commit actual
         int commit_anterior = stoi(Control::leer_json(".got/control_cliente.json", "commit"));
         string archivo_retornado;
-        while (commit_anterior != 0)
+        while (commit_anterior > 0)
         {
             // Pedir archivo agregado del commit anterior
             Json::Value root3;
@@ -439,7 +445,7 @@ void Command::status(string archivo)
     // Mostrar los archivos agregados/modificados
     for (int i = 0; i < vect_historial_archivos.size(); i++)
     {
-        spdlog::info("En el commit # " + vect_historial_archivos[i].first + " del archivo " + archivo + " fue " + vect_historial_archivos[i].second);
+        spdlog::info("En el commit # " + vect_historial_archivos[i].first + " el archivo " + archivo + " fue " + vect_historial_archivos[i].second);
     }
 }
 
@@ -508,7 +514,7 @@ void Command::rollback(string archivo, string commit)
     ofstream fs(Command::thisPath + "../repo/archivos_temporales/" + archivo);
     fs << descomprimir_data(dato_retornado, temporal_texto_ascii);
     fs.close();
-    
+
     if (stoi(commit) > 1)
     {
         // Aplicar diff hasta el commit pedido
@@ -549,5 +555,25 @@ void Command::rollback(string archivo, string commit)
 
 void Command::reset(string archivo)
 {
-    cout << archivo << endl;
+
+    // Guardar el # commit actual
+    string commit_retornado = Control::leer_json(".got/control_cliente.json", "commit");
+
+    // Reset funciona similar a rollback
+    Command::rollback(archivo, commit_retornado);
+}
+
+void Command::sync(string archivo)
+{
+
+    // Revisa el commit actual del q se va a hacer sync
+
+    // Verifica con el archivo del commit si hay cambios
+
+    // Aplica sync
+
+    // Saca diferencias del 1 respecto al 2
+    Command::diff_sync("/home/davidaqc/Documents/Progra3_GOT/Got-SVN/client/Repo_David/hola.txt",
+                       "/home/davidaqc/Documents/Progra3_GOT/Got-SVN/client/repo/archivos_temporales/hola.txt",
+                       "/home/davidaqc/Documents/Progra3_GOT/Got-SVN/client/repo/test.patch");
 }

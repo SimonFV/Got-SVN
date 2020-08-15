@@ -122,6 +122,7 @@ int main(int argc, char *argv[])
         }
         else if (argc == 3)
         {
+            Command::reset(argv[2]);
             spdlog::info("Regresando el archivo {} al commit anterior.", argv[2]);
             //DEVOLVER EL ARCHIVO AL COMMIT ANTERIOR
         }
@@ -140,6 +141,7 @@ int main(int argc, char *argv[])
         }
         else
         {
+            Command::sync(argv[2]);
             spdlog::info("Sincronizando el archivo {}", argv[2]);
             //SINCRONIZA EL ARCHIVO Y PERMITE EL MERGE
         }
