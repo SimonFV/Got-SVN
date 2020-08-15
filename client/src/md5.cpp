@@ -110,6 +110,7 @@ inline void MD5::II(uint4 &a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4
 // default ctor, just initailize
 MD5::MD5()
 {
+  digest[16] = {};
   init();
 }
 
@@ -118,6 +119,7 @@ MD5::MD5()
 // nifty shortcut ctor, compute MD5 for string and finalize it right away
 MD5::MD5(const std::string &text)
 {
+  digest[16] = {};
   init();
   update(text.c_str(), text.length());
   finalize();
@@ -144,9 +146,13 @@ void MD5::init()
 // decodes input (unsigned char) into output (uint4). Assumes len is a multiple of 4.
 void MD5::decode(uint4 output[], const uint1 input[], size_type len)
 {
-  for (unsigned int i = 0, j = 0; j < len; i++, j += 4)
+  unsigned int i = 0;
+  for (unsigned int j = 0; j < len; j += 4)
+  {
     output[i] = ((uint4)input[j]) | (((uint4)input[j + 1]) << 8) |
                 (((uint4)input[j + 2]) << 16) | (((uint4)input[j + 3]) << 24);
+    i++;
+  }
 }
 
 //////////////////////////////
@@ -155,12 +161,14 @@ void MD5::decode(uint4 output[], const uint1 input[], size_type len)
 // a multiple of 4.
 void MD5::encode(uint1 output[], const uint4 input[], size_type len)
 {
-  for (size_type i = 0, j = 0; j < len; i++, j += 4)
+  size_type i = 0;
+  for (size_type j = 0; j < len; j += 4)
   {
     output[j] = input[i] & 0xff;
     output[j + 1] = (input[i] >> 8) & 0xff;
     output[j + 2] = (input[i] >> 16) & 0xff;
     output[j + 3] = (input[i] >> 24) & 0xff;
+    i++;
   }
 }
 
