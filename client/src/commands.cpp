@@ -389,11 +389,11 @@ void Command::status(string archivo)
         {
             if (root["archivos"][it.key().asString()] == "no_controlado" || root["archivos"][it.key().asString()] == "agregado")
             {
-                spdlog::info("El archivo " + it.key().asString() + " ha sido agregado");
+                spdlog::info("El archivo " + it.key().asString() + " ha sido agregado respecto al commit anterior");
             }
             else if (root["archivos"][it.key().asString()] == "modificado")
             {
-                spdlog::info("El archivo " + it.key().asString() + " ha sido modificado");
+                spdlog::info("El archivo " + it.key().asString() + " ha sido modificado respecto al commit anterior");
             }
         }
     }
