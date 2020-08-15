@@ -4,6 +4,22 @@ const router = express.Router();
 const mysqlConnection  = require('../database.js');
 var md5 = require('md5');
 
+// Solicitar ultimo # commit
+router.get('/ultimo_commit', (req, res) => {
+  const {relacion_repositorio} = req.body;
+  mysqlConnection.query("SELECT id_commit " +
+              "FROM commit " +
+              "WHERE commit.relacion_repositorio ='"  + 
+              relacion_repositorio + "' " +
+              "ORDER BY id_commit DESC LIMIT 1 " , {relacion_repositorio}, (err, rows, fields) => {
+    if(!err) {
+      res.status(200).json({ rows });
+    } else {
+        res.status(500).send('Operacion fallida al solicitar ultimo_commit!');
+    }
+  });  
+});
+
 // Solicitar commit de un archivo
 router.get('/solicitar_commit', (req, res) => {
   const {nombre_archivo} = req.body;

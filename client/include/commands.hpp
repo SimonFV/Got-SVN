@@ -18,7 +18,7 @@ public:
     static string diff_a_string();
     static void status(string archivo);
     static void log();
-    static void rollback(string archivo, string commit);
+    static void rollback(string archivo, string commit, bool ruta_externa);
     static void reset(string archivo);
     static void sync(string archivo);
 };
