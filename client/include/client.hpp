@@ -19,7 +19,9 @@
 #include <commands.hpp>
 
 using namespace std;
-
+/**
+ * Clase cliente que realiza las requests HTTP al servidor.
+ */
 class Client
 {
 private:
@@ -66,10 +68,36 @@ public:
     int getStatus();
     string getPath();
 
+    /**
+     * Método que realiza un request http tipo POST
+     * @param _url direccion del pedido
+     * @param jsonFile cuerpo del pedido
+     */
     void POST(string _url, string jsonFile);
+
+    /**
+     * Método que realiza un request http tipo GET
+     * @param _url direccion del pedido
+     * @param jsonFile cuerpo del pedido
+     */
     void GET(string _url, string jsonFile);
+
+    /**
+     * Método que realiza un request http tipo PUT
+     * @param _url direccion del pedido
+     * @param jsonFile cuerpo del pedido
+     */
     void PUT(string _url, string jsonFile);
+
+    /**
+     * Método que realiza un request http tipo DELETE
+     * @param _url direccion del pedido
+     */
     void DELETE(string _url);
+
+    /**
+     * Método limpia las variables temporales.
+     */
     void limpiar();
 };
 
