@@ -7,6 +7,7 @@ class Command
 {
 public:
     static string thisPath;
+    static void diff_sync(string fileAfter, string fileBefore, string patch);
     static void diff(string fileAfter, string fileBefore, string result);
     static void applyChanges(string original, string changes);
     static void updateIgnore();
@@ -19,7 +20,7 @@ public:
     static void log();
     static void rollback(string archivo, string commit);
     static void reset(string archivo);
-
+    static void sync(string archivo);
 };
 
 #endif
