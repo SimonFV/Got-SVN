@@ -566,14 +566,31 @@ void Command::reset(string archivo)
 void Command::sync(string archivo)
 {
 
-    // Revisa el commit actual del q se va a hacer sync
+    // Guardar el # commit actual
+    string commit_retornado = Control::leer_json(".got/control_cliente.json", "commit");
 
-    // Verifica con el archivo del commit si hay cambios
+    // Se aplica rollback para llegar hasta el commit actual
+    Command::rollback(archivo, commit_retornado);
 
-    // Aplica sync
+    // Se verifica si hay cambios del commit actual con el trabajo actual
+    // Compararlo con el actual
+    Command::diff(Command::thisPath + archivo,
+                  Command::thisPath + "../repo/archivos_temporales/" + archivo,
+                  Command::thisPath + "../repo/test.patch");
 
-    // Saca diferencias del 1 respecto al 2
-    Command::diff_sync("/home/davidaqc/Documents/Progra3_GOT/Got-SVN/client/Repo_David/hola.txt",
-                       "/home/davidaqc/Documents/Progra3_GOT/Got-SVN/client/repo/archivos_temporales/hola.txt",
-                       "/home/davidaqc/Documents/Progra3_GOT/Got-SVN/client/repo/test.patch");
+    string comparacion_diff = Command::diff_a_string();
+
+    // Si hay cambios se aplica sync
+    // Si el archivo .patch esta en blanco, no hay diferencia
+    if (comparacion_diff == "")
+    {
+        spdlog::info("No hay cambios en el archivo!");
+    }
+    else
+    {
+        // Sincroniza los dos archivos
+        Command::diff_sync(Command::thisPath + archivo,
+                           Command::thisPath + "../repo/archivos_temporales/" + archivo,
+                           Command::thisPath + "../repo/test.patch");
+    }
 }
