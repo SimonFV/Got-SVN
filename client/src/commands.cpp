@@ -90,6 +90,9 @@ void Command::init(string repoName)
 
     ofstream file;
     file.open(thisPath + ".gotignore");
+    string mensaje = "PARA IGNORAR CARPETAS: <carpeta>/\nPARA IGNORAR ARCHIVOS: <archivo>.<extension>\n";
+    mensaje += "PARA IGNORAR ARCHIVOS DENTRO DE CARPETAS: <carpeta>/<archivo>.<extension>\n";
+    file << mensaje;
     file.close();
     spdlog::info("Agregado el archivo .gotignore");
 
